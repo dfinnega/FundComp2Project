@@ -10,21 +10,24 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include"goomba.h"
 using namespace std;
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 520;
-const int blockSize = 40;
+//const int LEVEL_WIDTH = 2040;//should be 8560
 
-class LTexture{
+//const int SCREEN_WIDTH = 640;
+//const int SCREEN_HEIGHT = 500;
+//const int blockSize = 40;
+
+/*class LTexture{
   public:
         LTexture();
         ~LTexture();
         bool loadFromFile(std::string path );
         void free(); //deallocates texture
         //renders texture at given point
-        void render(int x, int y, SDL_Rect* clip = NULL, SDL_Rect* stretchClip = NULL);
+        void render(int x, int y, SDL_Rect* clip = NULL);
         int getWidth();
         int getHeight();
         private:
@@ -44,9 +47,12 @@ class Enemy{
         //Initializes the variables
         Enemy();
         //moves the enemy
-        void move();
+        void move(SDL_Rect*);
         //shows the enemy on the screen
-        void render(SDL_Rect*, SDL_Rect*);
+        void render(int, int, SDL_Rect*);
+        //accessor functions
+        int getPosX();
+        int getPosY();
         private:
         //the x and y positions of the enemy
         int mPosX, mPosY;
@@ -54,12 +60,13 @@ class Enemy{
         int mVelX, mVelY;
         
 };
-
+*/
 //Scene Sprites
 const int ENEMY_ANIMATION_FRAMES = 3;
 SDL_Rect enemySpriteClips[ENEMY_ANIMATION_FRAMES];
-LTexture enemyTexture;
-                                       
+//LTexture enemyTexture;
+LTexture backgroundTexture;
+                                      
 //Starts up SDL and creates window
 bool init();
 
@@ -76,12 +83,12 @@ SDL_Texture* loadTexture( std::string path );
 SDL_Window* gWindow = NULL;
 
 //The window renderer
-SDL_Renderer* gRenderer = NULL;
+//SDL_Renderer* gRenderer = NULL;
 
 //Current displayed texture
-SDL_Texture* gTexture = NULL;
+//SDL_Texture* gTexture = NULL;
 
-//Ltexture functions
+/*//Ltexture functions
 LTexture::LTexture(){
    mTexture = NULL;
    mWidth = 0;
@@ -116,7 +123,7 @@ bool LTexture::loadFromFile(std::string path ){
       //get rid of old loaded surface
       SDL_FreeSurface(loadedSurface);
   }
-  //return success
+  return success
   mTexture = newTexture;
   return mTexture != NULL;
 }
@@ -130,12 +137,17 @@ void LTexture::free(){
   }
 }
 
-void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Rect* stretchClip){
+void LTexture::render(int x, int y, SDL_Rect* clip){
    //set rendering space and render to screen
-   stretchClip->x = x;
-   stretchClip->y = y;
+   SDL_Rect renderQuad = {x, y, mWidth, mHeight};
 
-   SDL_RenderCopy(gRenderer, mTexture, clip, stretchClip );
+   //set CLip rendering dimensions
+   if(clip!= NULL){
+      renderQuad.w = clip->w;
+      renderQuad.h = clip->h;
+   }
+
+   SDL_RenderCopy(gRenderer, mTexture, clip, &renderQuad );
 }
 
 int LTexture::getWidth(){
@@ -150,20 +162,24 @@ int LTexture::getHeight(){
 Enemy::Enemy(){
         //initializes the offsets
         mPosX = 0;
-        mPosY = 200;
+        mPosY = 420;
         //initialzes the velocity
         mVelX = 5;
         mVelY = 0;
 }
 
-void Enemy::move(){
+void Enemy::move(SDL_Rect* camera){
    //move the enemy loeft or right
    mPosX += mVelX;
 
-   //if the dot went too far to the left or right
-   if( (mPosX < 0) || (mPosX + ENEMY_WIDTH > SCREEN_WIDTH) ){
-      //Move back
-     mVelX = mVelX*(-1);
+   //object can't go back in map
+   if( mPosX < camera->x ){
+      //run into wall basically
+     mVelX = 0;
+   }
+   //if object reaches the end of the camera screen then bounce back
+   if(mPosX + ENEMY_WIDTH > camera->x+camera->w){
+      mVelX*=(-1);
    }
 
    //move the enemy up or down
@@ -175,12 +191,20 @@ void Enemy::move(){
    }
 }
 
-void Enemy::render(SDL_Rect* clip, SDL_Rect* stretchClip){
+void Enemy::render(int camX, int camY, SDL_Rect* clip){
    //show the dot
-   enemyTexture.render(mPosX, mPosY, clip, stretchClip);
+   enemyTexture.render(mPosX - camX, mPosY - camY, clip);
 }
 
+int Enemy::getPosX(){
+   return mPosX;
+}
 
+int Enemy::getPosY(){
+   return mPosY;
+}
+
+*/
 
 bool init()
 {
@@ -261,6 +285,11 @@ bool loadMedia()
            enemySpriteClips[2].w = 17;
            enemySpriteClips[2].h = 20;
         }
+        //Load Background texture
+        if(!backgroundTexture.loadFromFile("marioL1P1.bmp")){
+           printf("Failed to load background image %s! SDL Error: %s\n", "marioL1P1.bmp", SDL_GetError() );
+           success = false;
+        }
 
 	return success;
 }
@@ -333,6 +362,9 @@ int main( int argc, char* args[] )
                         //the enemy that will move around the screen
                         Enemy goomba;
 
+                        //the camera area
+                        SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
                        //current animation frame
                        int frame = 0;
 			
@@ -371,16 +403,19 @@ marioSprites[jumpr].h = 18;
 
 			SDL_Rect clip;
                         clip.x = 50;
-                        clip.y = 200;
+                        clip.y = 460;
                         clip.w = 40;
                         clip.h = 40;
 
                         //stretch enemy
                         SDL_Rect enemyClip;
 		        enemyClip.x = 50;
-                        enemyClip.y = 200;
+                        enemyClip.y = 460;
                         enemyClip.w = 40;
                         enemyClip.h = 40;
+
+                        //background stretch
+                        
 
 			SDL_RendererFlip flipType = SDL_FLIP_NONE;
 			//While application is running
@@ -389,7 +424,7 @@ marioSprites[jumpr].h = 18;
 			int j=0;
 			int running = 0;
 			double xpos = 50;
-			double ypos = 200;
+			double ypos = 460;
 			double yvel = 0;
 			double xvel = 0;
 			int xdirection = right;
@@ -567,7 +602,24 @@ if( currentKeyStates[ SDL_SCANCODE_LEFT ] && currentKeyStates[ SDL_SCANCODE_RIGH
 }
 */				
                                  //move the enemy
-                                 goomba.move();                               
+                                 goomba.move(&camera); //cant mario move back past a certain point                               
+
+                                 //center the camera over the goomba
+                                 //move the camera around mario
+                                 if( goomba.getPosX() > camera.x + (blockSize*5) ){
+                                    camera.x +=5; //5 is just to match movement velocity of goomba
+                                    //so if it was mario, you would just want to add the velocity at that moment
+                                 }
+                                 //camera.x = (goomba.getPosX() + blockSize/2) - SCREEN_WIDTH/2;
+                                 //camera.y = (goomba.getPosY() + blockSize/2) - SCREEN_HEIGHT/2;
+
+                                 //keep the camera in bounds only have to worry about x-axis
+                                 //if(camera.x < 0){
+                                   // camera.x = 0;
+                                 //}
+                                 if(camera.x >LEVEL_WIDTH - camera.w){
+                                    camera.x = LEVEL_WIDTH - camera.w;
+                                 }
 
                                  //Clear screen
 		                SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
@@ -585,13 +637,23 @@ else if(xvel==0) {sprite = standr; j=0; }
 else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
   sprite = skidr;
 } else sprite = runr1 + j;
-                                //render current enemy frame
-                                goomba.render(&enemySpriteClips[frame/2], &enemyClip);
 
+
+                                //render background
+                                backgroundTexture.render(0, 0, &camera);
+
+                                //render current enemy frame
+                                goomba.render(camera.x, camera.y, &enemySpriteClips[frame/2]);
 
 
 				//Render sprite texture to screen
 				SDL_RenderCopyEx( gRenderer, gTexture, &marioSprites[sprite],&clip,0,NULL,flipType );
+
+                                //render vertical lines spaced  40 pixels apart
+                                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0x00, 0xFF);
+                                for( int gridLength=1; gridLength<=SCREEN_WIDTH/blockSize; gridLength ++){
+                                   SDL_RenderDrawLine( gRenderer, gridLength*blockSize, 0, gridLength*blockSize, SCREEN_HEIGHT);
+                                }
 				//render horizontal grid to screen
 		                SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0x00, 0xFF);
 				for(int gridheight=1; gridheight<=SCREEN_HEIGHT/blockSize; gridheight ++){
@@ -626,8 +688,8 @@ else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
 
 				clip.y = ypos;
 				clip.x = xpos;
-				printf("yvel: %f xvel: %f clip.y: %i clip.x:%i running:%i onGround:%i\n",yvel,xvel,clip.y,clip.x,running,onGround);
-				SDL_Delay(16);
+				//printf("yvel: %f xvel: %f clip.y: %i clip.x:%i running:%i onGround:%i\n",yvel,xvel,clip.y,clip.x,running,onGround);
+				//SDL_Delay(16);
 			}
 		}
 	}

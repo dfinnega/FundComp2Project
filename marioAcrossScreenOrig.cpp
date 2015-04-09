@@ -54,10 +54,6 @@ const int ENEMY_ANIMATION_FRAMES = 3;
 SDL_Rect enemySpriteClips[ENEMY_ANIMATION_FRAMES];
 LTexture enemyTexture;
 
-const int MARIO_ANIMATION_FRAMES = 12;
-SDL_Rect marioSprites[MARIO_ANIMATION_FRAMES];
-LTexture marioTexture;
-
 //Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
@@ -134,8 +130,15 @@ void LTexture::free(){
 
 void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Rect* stretchClip){
    //set rendering space and render to screen
+   //SDL_Rect renderQuad = {x, y, mWidth, mHeight};
    stretchClip->x = x;
    stretchClip->y = y;
+
+   //set clip rendering dimensions
+   //if(clip != NULL){
+   //   stretchClip->w = clip->w;
+   //   stretchClip->h = clip->h;
+   //}
 
    SDL_RenderCopy(gRenderer, mTexture, clip, stretchClip );
 }
@@ -261,48 +264,6 @@ bool loadMedia()
            enemySpriteClips[2].w = 17;
            enemySpriteClips[2].h = 20;
         }
-      
-        //load mario
-        if(!marioTexture.loadFromFile("smb_mario_sheet.bmp") ){
-           printf("Failed to load mario image\n");
-           success = false;
-        } else{
-           //clip sprit sheet
-	marioSprites[0].x = 210;
-	marioSprites[0].y = 0;
-	marioSprites[0].w = 17;
-	marioSprites[0].h = 18;
-
-	marioSprites[1].x = 238;
-	marioSprites[1].y = 0;
-	marioSprites[1].w = 17;
-	marioSprites[1].h = 18;
-
-	marioSprites[2].x = 267;
-	marioSprites[2].y = 0;
-	marioSprites[2].w = 17;
-	marioSprites[2].h = 18;
-	
-	marioSprites[3].x = 298;
-	marioSprites[3].y = 0;
-	marioSprites[3].w = 17;
-	marioSprites[3].h = 18;
-	
-	marioSprites[4].x = 359;
-	marioSprites[4].y = 0;
-	marioSprites[4].w = 17;
-	marioSprites[4].h = 18;
-	
-	marioSprites[5].x = 210;
-	marioSprites[5].y = 0;
-	marioSprites[5].w = 16;
-	marioSprites[5].h = 18;
-	
-	marioSprites[6].x = 210;
-	marioSprites[6].y = 0;
-	marioSprites[6].w = 16;
-	marioSprites[6].h = 18;
-        }        
 
 	return success;
 }
@@ -379,7 +340,7 @@ int main( int argc, char* args[] )
                         //Current animation frame
                         int frame = 0;
 			
-/*SDL_Rect marioSprites[12];
+SDL_Rect marioSprites[12];
 enum {standr,runr1,runr2,runr3,stopr,jumpr,standl,runl1,runl2,runl3,stopl,jumpl};
 //clip sprit sheet
 marioSprites[standr].x = 210;
@@ -416,7 +377,7 @@ marioSprites[standr].x = 210;
 marioSprites[standr].y = 0;
 marioSprites[standr].w = 16;
 marioSprites[standr].h = 18;
-*/
+
 			SDL_Rect clip;
                         clip.x = 50;
                         clip.y = 200;
@@ -464,7 +425,7 @@ marioSprites[standr].h = 18;
 				else sprite = runr1 + i;
 
 				//Render sprite 1
-				mario.render(&marioSprites[sprite],&clip );
+				SDL_RenderCopy( gRenderer, gTexture, &marioSprites[sprite],&clip );
 			
 
                                 //render Current Enemy frame

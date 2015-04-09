@@ -17,6 +17,49 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 520;
 const int blockSize = 40;
 
+class LTexture{
+  public:
+        LTexture();
+        ~LTexture();
+        bool loadFromFile(std::string path );
+        void free(); //deallocates texture
+        //renders texture at given point
+        void render(int x, int y, SDL_Rect* clip = NULL, SDL_Rect* stretchClip = NULL);
+        int getWidth();
+        int getHeight();
+        private:
+        SDL_Texture* mTexture;
+        int mWidth;
+        int mHeight;
+};
+                                                          
+
+class Enemy{
+   public:
+        //the dimensions of the enemy
+        static const int ENEMY_WIDTH = 40;
+        static const int ENEMY_HEIGHT = 40;
+   //Maximum axis velocity of the dot
+        static const int DOT_VEL = 10;
+        //Initializes the variables
+        Enemy();
+        //moves the enemy
+        void move();
+        //shows the enemy on the screen
+        void render(SDL_Rect*, SDL_Rect*);
+        private:
+        //the x and y positions of the enemy
+        int mPosX, mPosY;
+        //velocity  of the dot
+        int mVelX, mVelY;
+        
+};
+
+//Scene Sprites
+const int ENEMY_ANIMATION_FRAMES = 3;
+SDL_Rect enemySpriteClips[ENEMY_ANIMATION_FRAMES];
+LTexture enemyTexture;
+                                       
 //Starts up SDL and creates window
 bool init();
 
@@ -37,6 +80,107 @@ SDL_Renderer* gRenderer = NULL;
 
 //Current displayed texture
 SDL_Texture* gTexture = NULL;
+
+//Ltexture functions
+LTexture::LTexture(){
+   mTexture = NULL;
+   mWidth = 0;
+   mHeight = 0;
+}
+
+LTexture::~LTexture(){
+   free();
+}
+
+bool LTexture::loadFromFile(std::string path ){
+  //Get rid of preexisting texture
+  free();
+  SDL_Texture* newTexture = NULL;
+
+  SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str() );
+  if(loadedSurface == NULL){
+      printf ("Unable to load image\n");
+  }else{
+      //Color hey image
+      //SDL_SetColorKey(loadedSurface, SDL_True, SDL_MapRGB(loadedSurface->format, 0, 0xFF, 0xFF));
+
+      //create texture from surface pixels
+      newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
+      if(newTexture == NULL){
+         printf("Unable to create texture from\n");
+      }else {
+         //get image dimensions
+         mWidth = loadedSurface->w;
+         mHeight = loadedSurface->h;
+      }
+      //get rid of old loaded surface
+      SDL_FreeSurface(loadedSurface);
+  }
+  //return success
+  mTexture = newTexture;
+  return mTexture != NULL;
+}
+
+void LTexture::free(){
+  if(mTexture !=NULL){
+     SDL_DestroyTexture(mTexture);
+     mTexture = NULL;
+     mWidth = 0;
+     mHeight = 0;
+  }
+}
+
+void LTexture::render(int x, int y, SDL_Rect* clip, SDL_Rect* stretchClip){
+   //set rendering space and render to screen
+   stretchClip->x = x;
+   stretchClip->y = y;
+
+   SDL_RenderCopy(gRenderer, mTexture, clip, stretchClip );
+}
+
+int LTexture::getWidth(){
+   return mWidth;
+}
+
+int LTexture::getHeight(){
+   return mHeight;
+}
+
+//Enemy class functions
+Enemy::Enemy(){
+        //initializes the offsets
+        mPosX = 0;
+        mPosY = 200;
+        //initialzes the velocity
+        mVelX = 5;
+        mVelY = 0;
+}
+
+void Enemy::move(){
+   //move the enemy loeft or right
+   mPosX += mVelX;
+
+   //if the dot went too far to the left or right
+   if( (mPosX < 0) || (mPosX + ENEMY_WIDTH > SCREEN_WIDTH) ){
+      //Move back
+     mVelX = mVelX*(-1);
+   }
+
+   //move the enemy up or down
+   mPosY += mVelY;
+   //if the enemy went too far up or down
+   if( (mPosY < 0) || (mPosY + ENEMY_HEIGHT > SCREEN_HEIGHT) ){
+      //move back
+      mPosY -= mVelY*(-1);
+   }
+}
+
+void Enemy::render(SDL_Rect* clip, SDL_Rect* stretchClip){
+   //show the dot
+   enemyTexture.render(mPosX, mPosY, clip, stretchClip);
+}
+
+
 
 bool init()
 {
@@ -97,6 +241,26 @@ bool loadMedia()
 		printf( "Failed to load texture image!\n" );
 		success = false;
 	}
+        //Load enemy Texture
+        if(!enemyTexture.loadFromFile("smb_enemy_sheet.bmp")){
+          printf("Failed to load enemy texture image\n");
+          success = false;
+        } else{
+           enemySpriteClips[0].x = 0;
+           enemySpriteClips[0].y = 0;
+           enemySpriteClips[0].w = 17;
+           enemySpriteClips[0].h = 20;
+
+           enemySpriteClips[1].x = 30;
+           enemySpriteClips[1].y = 0;
+           enemySpriteClips[1].w = 17;
+           enemySpriteClips[1].h = 20;
+
+           enemySpriteClips[2].x = 60;
+           enemySpriteClips[2].y = 0;
+           enemySpriteClips[2].w = 17;
+           enemySpriteClips[2].h = 20;
+        }
 
 	return success;
 }
@@ -165,7 +329,12 @@ int main( int argc, char* args[] )
 
 			//Event handler
 			SDL_Event e;
+                        
+                        //the enemy that will move around the screen
+                        Enemy goomba;
 
+                       //current animation frame
+                       int frame = 0;
 			
 SDL_Rect marioSprites[12];
 enum {standr,runr1,runr2,runr3,skidr,jumpr};
@@ -205,6 +374,14 @@ marioSprites[jumpr].h = 18;
                         clip.y = 200;
                         clip.w = 40;
                         clip.h = 40;
+
+                        //stretch enemy
+                        SDL_Rect enemyClip;
+		        enemyClip.x = 50;
+                        enemyClip.y = 200;
+                        enemyClip.w = 40;
+                        enemyClip.h = 40;
+
 			SDL_RendererFlip flipType = SDL_FLIP_NONE;
 			//While application is running
 			enum{left, right};
@@ -388,7 +565,11 @@ if( currentKeyStates[ SDL_SCANCODE_LEFT ] && currentKeyStates[ SDL_SCANCODE_RIGH
     xvel = 0;
   }
 }
-*/				//Clear screen
+*/				
+                                 //move the enemy
+                                 goomba.move();                               
+
+                                 //Clear screen
 		                SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
                 		SDL_RenderClear( gRenderer );
 
@@ -404,6 +585,9 @@ else if(xvel==0) {sprite = standr; j=0; }
 else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
   sprite = skidr;
 } else sprite = runr1 + j;
+                                //render current enemy frame
+                                goomba.render(&enemySpriteClips[frame/2], &enemyClip);
+
 
 
 				//Render sprite texture to screen
@@ -415,6 +599,13 @@ else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
 				}
 				//Update screen
 				SDL_RenderPresent( gRenderer );
+
+                                //go to next frame
+                                ++frame;
+                                //cycle animation
+                                if(frame/2 >= (ENEMY_ANIMATION_FRAMES -1)){
+                                   frame = 0;
+                                }
 
 
 			 //This next block updates Mario's position
