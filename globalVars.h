@@ -13,4 +13,4 @@ extern SDL_Window* gWindow;
 extern SDL_Renderer* gRenderer;
 
 //Current displayed texture
-extern SDL_Texture* gTexture;
+extern SDL_Texture* marioSheet;

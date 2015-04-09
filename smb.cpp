@@ -23,7 +23,7 @@ SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL; 
  
 //Current displayed texture 
-SDL_Texture* gTexture = NULL; 
+SDL_Texture* marioSheet = NULL; 
 
 //=========================================================================
 //Begin main program
@@ -350,7 +350,7 @@ else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
   SDL_RenderClear( gRenderer );
 
   //Render sprite texture to screen
-  SDL_RenderCopyEx( gRenderer, gTexture, &marioSprites[sprite],&clip,0,NULL,flipType );
+  SDL_RenderCopyEx( gRenderer, marioSheet, &marioSprites[sprite],&clip,0,NULL,flipType );
   //render horizontal grid to screen
   SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0x00, 0xFF);
   for(int gridheight=1; gridheight<=SCREEN_HEIGHT/blockSize; gridheight ++){

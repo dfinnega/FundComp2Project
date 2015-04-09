@@ -62,8 +62,8 @@ bool loadMedia()
         bool success = true;
 
         //Load PNG texture
-        gTexture = loadTexture( "smb_mario_sheet.bmp" );
-        if( gTexture == NULL )
+        marioSheet = loadTexture( "mario.bmp" );
+        if( marioSheet == NULL )
         {
                 printf( "Failed to load texture image!\n" );
                 success = false;
@@ -76,8 +76,8 @@ bool loadMedia()
 void close()
 {
         //Free loaded image
-        SDL_DestroyTexture( gTexture );
-        gTexture = NULL;
+        SDL_DestroyTexture( marioSheet );
+        marioSheet = NULL;
 
         //Destroy window        
         SDL_DestroyRenderer( gRenderer );
