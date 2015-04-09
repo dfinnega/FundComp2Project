@@ -1,12 +1,9 @@
 FILE=smb
 
-all: $(FILE) texture
+all: $(FILE)
 
 $(FILE): $(FILE).o init.o
-	g++ $(FILE).o init.o -lSDL2 -lSDL_image -O0 -g3 -o $(FILE)
-
-texture: marioAcrossScreen.cpp
-	g++ marioAcrossScreen.cpp -lSDL2 -lSDL_image -o render2
+	g++ $(FILE).o init.o -lSDL2 -lSDL_image -o $(FILE)
 
 $(FILE).o: $(FILE).cpp
 	g++ $(FILE).cpp -lSDL2 -lSDL_image -c
@@ -16,4 +13,4 @@ SDL: init.cpp
 
 PHONY: clean
 clean:
-	rm *.o $(FILE) texture
+	rm *.o $(FILE)
