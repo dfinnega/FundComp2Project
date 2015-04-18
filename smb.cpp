@@ -7,6 +7,8 @@ and may not be redistributed without written permission.*/
 #include "init.h"
 #include "Mario.h"
 #include "globalVars.h"
+#include "Ltexture.h"
+#include "enemy.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -14,7 +16,7 @@ using namespace std;
 
 //Screen dimension constants 
 const int SCREEN_WIDTH = 640; 
-const int SCREEN_HEIGHT = 520; 
+const int SCREEN_HEIGHT = 540; 
 const int blockSize = 40; 
  
 //The window we'll be rendering to 
@@ -30,6 +32,9 @@ SDL_Texture* marioSheet = NULL;
 //Begin main program
 int main( int argc, char* args[] )
 {
+        //declare enemies
+        Enemy goomba(3, 0, 0, 17, 20, 30);
+
 	//Start up SDL and create window
 	if( !init() )
 	{
@@ -38,7 +43,7 @@ int main( int argc, char* args[] )
 	else
 	{
 		//Load media
-		if( !loadMedia() )
+		if( !loadMedia(&goomba) )
 		{
 			printf( "Failed to load media!\n" );
 		}
@@ -49,6 +54,9 @@ int main( int argc, char* args[] )
 
 			//Event handler
 			SDL_Event e;
+
+                        //the camera are
+                        SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 			int i=0;
 			Mario mario;
@@ -69,6 +77,8 @@ int main( int argc, char* args[] )
 
 mario.handleInput(i);
 
+goomba.move(&camera);
+
 //===============================================================================================
 
 //Rendering function
@@ -77,6 +87,7 @@ mario.handleInput(i);
   SDL_RenderClear( gRenderer );
 
   mario.render();
+  goomba.render(camera.x, camera.y);
 
   //Update screen
   SDL_RenderPresent( gRenderer );
