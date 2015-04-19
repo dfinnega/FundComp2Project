@@ -9,6 +9,8 @@ and may not be redistributed without written permission.*/
 #include "globalVars.h"
 #include "Ltexture.h"
 #include "enemy.h"
+#include "goomba.h"
+#include "koopa.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -33,7 +35,8 @@ SDL_Texture* marioSheet = NULL;
 int main( int argc, char* args[] )
 {
         //declare enemies
-        Enemy goomba(3, 0, 0, 17, 20, 30);
+        Goomba mushroom(3, 0, 0, 17, 20, 30, 200, 420);
+        Koopa turtle(4, 150, 0, 17, 25, 30, 300, 420);
 
 	//Start up SDL and create window
 	if( !init() )
@@ -43,10 +46,13 @@ int main( int argc, char* args[] )
 	else
 	{
 		//Load media
-		if( !loadMedia(&goomba) )
+		if( !loadMedia(&mushroom) )
 		{
 			printf( "Failed to load media!\n" );
 		}
+                if( !loadMedia(&turtle) ){
+                        printf("Failed to load media!\n");
+                }
 		else
 		{	
 			//Main loop flag
@@ -77,7 +83,8 @@ int main( int argc, char* args[] )
 
 mario.handleInput(i);
 
-goomba.move(&camera);
+mushroom.move(&camera);
+turtle.move(&camera);
 
 //===============================================================================================
 
@@ -87,7 +94,8 @@ goomba.move(&camera);
   SDL_RenderClear( gRenderer );
 
   mario.render();
-  goomba.render(camera.x, camera.y);
+  mushroom.render(camera.x, camera.y);
+  turtle.render(camera.x, camera.y);
 
   //Update screen
   SDL_RenderPresent( gRenderer );
