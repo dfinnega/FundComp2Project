@@ -5,6 +5,8 @@
 //Screen dimension constants
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
+extern const int LEVEL_WIDTH;
+extern const int LEVEL_HEIGHT;
 extern const int blockSize;
 
 //The window we'll be rendering to

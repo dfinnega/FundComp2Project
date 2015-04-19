@@ -137,10 +137,4 @@ stair           191     8
 stair           191     7
 stair           191     6
 stair           191     5
-stair		200	11
-
-
-
-
-
-
+stair		200	12

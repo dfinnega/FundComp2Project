@@ -84,7 +84,7 @@ Mario::Mario(){
   onGround = 1;
 }
 //==============================================================================================
-void Mario::move(int i){
+void Mario::move(int i, int camerax){
   //Move Mario function 
   //This next block updates Mario's position
   i++;
@@ -100,12 +100,12 @@ void Mario::move(int i){
   //Update the x position
   xpos += xvel;
   //if Mario is off the screen, rotate to other side of screen
-  if(xpos > SCREEN_WIDTH) xpos = 0;//if x is off right side of screen, move to left side of screen
-  else if(xpos < -spriteLocation.w) xpos = SCREEN_WIDTH;//if x is off left, push to right
+  //if(xpos > SCREEN_WIDTH) xpos = 0;//if x is off right side of screen, move to left side of screen
+  //else if(xpos < -spriteLocation.w) xpos = SCREEN_WIDTH;//if x is off left, push to right
 
   // This renders Mario's bottom left at the ypos (for better control of where Mario is)
-  spriteLocation.y = ypos+5;// - spriteLocation.h; 
-  spriteLocation.x = xpos;
+  spriteLocation.y = ypos+5;
+  spriteLocation.x = xpos - camerax;
 
   //this next line prints Mario's current values
   //printf("yvel: %f xvel: %f spriteLocation.y: %i spriteLocation.x:%i running:%i onGround:%i\n",yvel,xvel,spriteLocation.y,spriteLocation.x,running,onGround);
@@ -113,7 +113,9 @@ void Mario::move(int i){
 //==============================================================================================
 void Mario::render(){
   //Mario's Rendering function 
-  //Render sprite texture to screen 
+  //Render sprite texture to screen
+
+
   SDL_RenderCopyEx( gRenderer, marioSheet, &marioSprites[sprite()],&spriteLocation,0,NULL,flipType ); 
   //render horizontal grid to screen 
   SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0x00, 0xFF); 
@@ -334,5 +336,10 @@ void Mario::handleInput(int i){
 int Mario::collision(){
 
 }
-
-
+//==============================================================================================
+double Mario::xposition(){
+  return xpos;
+}
+double Mario::xvelocity(){
+  return xvel;
+}

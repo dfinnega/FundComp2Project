@@ -4,6 +4,7 @@ and may not be redistributed without written permission.*/
 //Using SDL, SDL_image, standard IO, and strings
 #include <SDL2/SDL.h>
 #include <SDL/SDL_image.h>
+#include <fstream>
 #include "init.h"
 #include "Mario.h"
 #include "NonMoving.h"
@@ -23,6 +24,8 @@ using namespace std;
 const int SCREEN_WIDTH = 640; 
 const int SCREEN_HEIGHT = 520; 
 const int blockSize = 40; 
+const int LEVEL_WIDTH = 200 * blockSize; 
+const int LEVEL_HEIGHT = 520; 
  
 //The window we'll be rendering to 
 SDL_Window* gWindow = NULL; 
@@ -58,28 +61,41 @@ int main( int argc, char* args[] )
   //loop counter, to determine timing and such
   int i=0;
 
-  //declare the different classes
-  Brick brick2(6,9);
-  Brick brick1(4,9);
-  Pipe pipe1(12,11);
-  Question quest(5,9);
+  //declare Mario
   Mario mario;
 
   //create list of nonmoving elements
   vector<NonMoving*> nonmoving;
-  nonmoving.push_back(&brick1);
-  nonmoving.push_back(&brick2);
-  nonmoving.push_back(&pipe1);
-  nonmoving.push_back(&quest);
-  for(int k=0;k<16;k++){
-	nonmoving.push_back(new Ground(k+1, 13));
-  }
-  for(int k=0; k<4; k++){
-	nonmoving.push_back(new Ground(k+1, k+1));
-  }
-	
 
+  //Create the level using the world1-1.txt file
+  ifstream world11;
+  world11.open("world1-1.txt");
+  if(!world11){ printf("The world 1-1 file didn't open"); }
+  int xcoord, ycoord;
+  
+  string blockType;
+  while(!world11.eof()){
+    world11 >> blockType;
+    world11 >> xcoord;
+    world11 >> ycoord;
+	if(blockType == "brick")
+		nonmoving.push_back(new Brick(xcoord, ycoord));
+	else if(blockType == "question")
+		nonmoving.push_back(new Question(xcoord, ycoord));
+	else if(blockType == "pipe")
+		nonmoving.push_back(new Pipe(xcoord, ycoord));
+	else if(blockType == "stair")
+		nonmoving.push_back(new Stair(xcoord, ycoord));
+  }
+  //create the ground (ignore the missing blocks for now)
+  for(int k = 1; k<=200; k++){
+    nonmoving.push_back(new Ground(k, 13));
+  }
 
+  //create the camera
+  SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+//==================================================================================================
   //Start the game loop
   while( !quit ){
 	//Handle events on queue (quit or no quit)
@@ -101,6 +117,21 @@ int main( int argc, char* args[] )
   SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
   SDL_RenderClear( gRenderer );
 
+  cout << mario.xposition() << " " << camera.x << endl;
+  if(mario.xposition() > (camera.x + (8*blockSize))){
+    camera.x += mario.xvelocity();
+  }
+
+  //Keep the camera in bounds
+  if( camera.x < 0 )
+  { 
+    camera.x = 0;
+  }
+  if( camera.x > LEVEL_WIDTH - camera.w )
+  {
+    camera.x = LEVEL_WIDTH - camera.w;
+  }
+  
   mario.render();
   for(int j=0; j<nonmoving.size(); j++){
 	nonmoving[j]->render();
@@ -113,7 +144,7 @@ int main( int argc, char* args[] )
   //Move Mario function 
   //This next block updates Mario's position
   i++;//increment the loopcount
-  mario.move(i);  
+  mario.move(i,camera.x);  
 
   if(i>100) nonmoving[4]->collision();
   //delays to set proper framerate

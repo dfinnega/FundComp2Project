@@ -9,8 +9,10 @@ class Mario {
   public:
     Mario();
     void handleInput(int);
-    void move(int);
+    void move(int,int);
     void render();
+    double xposition();
+    double xvelocity();
     int collision();
     void deathAnimation();
     

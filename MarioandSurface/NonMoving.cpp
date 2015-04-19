@@ -13,5 +13,6 @@ NonMoving::NonMoving(int xgrid, int ygrid){
 }
 
 void NonMoving::render(){
+  
   SDL_RenderCopyEx( gRenderer, blockSheet, &sprite, &position, 0, NULL, SDL_FLIP_NONE );
 }
