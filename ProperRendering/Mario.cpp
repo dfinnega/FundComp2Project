@@ -334,20 +334,7 @@ void Mario::handleInput(int i){
   }
 }
 //==============================================================================================
-int Mario::mapCollision(int camerax, SDL_Rect object){
-  //first line checks if Mario is above object, second checks if his x is above
-  if( ( (ypos+spriteLocation.h)>object.y && (ypos+spriteLocation.h)<(object.y+object.h))){
-	cout << "Above" << endl;
-	if(
-	((xpos>object.x && xpos<(object.x+object.w)) ||
-	((xpos+spriteLocation.w)>object.x && (xpos+spriteLocation.w)<(object.x+object.w))) ){
-		//if this executes, Mario is inside the block, should be returned to prev position
-		cout << "top" << endl;
-		yvel = 0;
-		ypos = object.y;
-  }}
-
-/*
+int Mario::collision(int camerax, SDL_Rect object){
    int a=0,  b=0;
    //collide into right
    if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ) a = 1;
@@ -374,7 +361,7 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
    }
 
    //collide into top
-   if( ( (ypos+blockSize) >= object.y ) && (ypos < object.y) ) a = 1;
+   /*if( ( (ypos+blockSize) >= object.y ) && (ypos < object.y) ) a = 1;
    if(  ((xpos > object.x) || ( (xpos+blockSize) > (object.x) ) ) && ( (xpos < (object.x + object.w)) || ( (xpos+blockSize) < (object.x + object.w) ) )   ) b = 1;
    if( (a==1) && (b==1) ){
       cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
@@ -392,8 +379,11 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
       a = 0;
       b = 0;
    }*/
+
+  spriteLocation.y = ypos+5;
+  spriteLocation.x = xpos - camerax;
 }
-//==============================================================================================
+
 void Mario::enemyCollision(SDL_Rect object){
    int a=0,  b=0;
    //collide into right

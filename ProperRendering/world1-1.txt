@@ -138,7 +138,3 @@ stair           191     7
 stair           191     6
 stair           191     5
 stair		200	12
-noGround	88	13
-noGround	89	13
-noGround	90	13
-noGround	155	13

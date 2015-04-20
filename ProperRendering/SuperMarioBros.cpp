@@ -21,7 +21,7 @@ and may not be redistributed without written permission.*/
 #include <stdio.h>
 #include <iostream>
 #include <string>
-#include <deque>
+#include <vector>
 using namespace std;
 
 //Screen dimension constants 
@@ -81,7 +81,7 @@ int main( int argc, char* args[] )
   Mario mario;
 
   //create list of nonmoving elements
-  deque<NonMoving*> nonmoving;
+  vector<NonMoving*> nonmoving;
 
   //Create the level using the world1-1.txt file
   ifstream world11;
@@ -89,11 +89,6 @@ int main( int argc, char* args[] )
   if(!world11){ printf("The world 1-1 file didn't open"); }
   int xcoord, ycoord;
   
-  //create the ground (remove the missing blocks in the next while loop)
-  for(int k = 1; k<=220; k++){
-    nonmoving.push_back(new Ground(k, 13));
-  }
-  int erasedBlocks = 0;
   string blockType;
   while(!world11.eof()){
     world11 >> blockType;
@@ -107,10 +102,10 @@ int main( int argc, char* args[] )
 		nonmoving.push_back(new Pipe(xcoord, ycoord));
 	else if(blockType == "stair")
 		nonmoving.push_back(new Stair(xcoord, ycoord));
-	else if(blockType == "noGround"){//erase a ground block
-		nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
-		erasedBlocks++;
-	}
+  }
+  //create the ground (ignore the missing blocks for now)
+  for(int k = 1; k<=200; k++){
+    nonmoving.push_back(new Ground(k, 13));
   }
 
   //create the camera
@@ -177,14 +172,14 @@ int main( int argc, char* args[] )
 
   //Check for collisions
   for(int j = 0; j < nonmoving.size(); j++){
-     mario.mapCollision(camera.x, nonmoving[j]->getPos());
+     mario.collision(camera.x, nonmoving[j]->getPos());
   }
   mario.enemyCollision(shroom.getHitBox());
   mario.enemyCollision(shell.getHitBox());
   
   if(i>100) nonmoving[4]->collision();
   //delays to set proper framerate
-  SDL_Delay(12);
+  SDL_Delay(16);
   }
 
 //Free resources and close SDL
