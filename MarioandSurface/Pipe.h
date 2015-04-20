@@ -9,9 +9,10 @@
 class Pipe: public NonMoving{
   public:
         Pipe(int, int);//constructor
-	virtual void render(); //render function must be modified
+	virtual void render(int, int); //render function must be modified
         void collision();//collision animation
   private:
+        SDL_Rect renderPosition;
 	int height; //height of the pipe (varies from pipe to pipe)
 	SDL_Rect extraPipeSprite;
 	SDL_Rect extraPipePosition;

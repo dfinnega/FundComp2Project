@@ -13,7 +13,8 @@ class Mario {
     void render();
     double xposition();
     double xvelocity();
-    int collision();
+    int collision(int, SDL_Rect);
+    void enemyCollision(SDL_Rect); //see if mario dies!
     void deathAnimation();
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier

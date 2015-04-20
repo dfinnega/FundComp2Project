@@ -12,7 +12,16 @@ NonMoving::NonMoving(int xgrid, int ygrid){
   position.h = blockSize;
 }
 
-void NonMoving::render(){
-  
-  SDL_RenderCopyEx( gRenderer, blockSheet, &sprite, &position, 0, NULL, SDL_FLIP_NONE );
+void NonMoving::render(int camX, int camY){
+  renderPosition.x = position.x - camX;
+  renderPosition.y = position.y - camY;
+  renderPosition.h = blockSize;
+  renderPosition.w = blockSize;
+  //position.x-=camX;
+  //position.y-=camY;
+  SDL_RenderCopyEx( gRenderer, blockSheet, &sprite, &renderPosition, 0, NULL, SDL_FLIP_NONE );
 }
+
+SDL_Rect NonMoving::getPos(){
+   return position;
+};

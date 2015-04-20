@@ -19,7 +19,7 @@ Question::Question(int xgrid, int ygrid)
 void Question::collision(){
 //change it to a dead question sprite
   sprite.x = 373;
-  sprite.y = 65;
+  sprite.y = 75;
   sprite.w = 16;
   sprite.h = 16;
 }

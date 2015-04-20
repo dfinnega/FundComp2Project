@@ -3,6 +3,8 @@
 #include <SDL/SDL_image.h>
 #include "init.h"
 #include "globalVars.h"
+#include "enemy.h"
+#include "Ltexture.h"
 #include <string>
 #include <stdio.h>
 using namespace std;
@@ -76,8 +78,7 @@ bool loadMedia()
                 printf( "Failed to load texture image!\n" );
                 success = false;
         }
-
-
+        
         return success;
 }
 

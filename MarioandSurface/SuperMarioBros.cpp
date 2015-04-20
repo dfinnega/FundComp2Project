@@ -14,6 +14,10 @@ and may not be redistributed without written permission.*/
 #include "Ground.h"
 #include "Stair.h"
 #include "globalVars.h"
+#include "Ltexture.h"
+#include "enemy.h"
+#include "goomba.h"
+#include "koopa.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -41,6 +45,9 @@ SDL_Texture* blockSheet = NULL;
 //Begin main program
 int main( int argc, char* args[] )
 {
+   //enemies
+   Goomba shroom(3, 0, 0, 17, 20, 30, 200, 11*blockSize);
+   Koopa shell(4, 150, 0, 17, 23, 30, 300, 11*blockSize);
   //Start up SDL and create window
   if( !init() ) {
 	printf( "Failed to initialize!\n" );
@@ -51,6 +58,15 @@ int main( int argc, char* args[] )
 	printf( "Failed to load media!\n" );
 	return 2;
   }
+  if( !shroom.loadTexture("smb_enemies_sheet.bmp") ){
+     printf( "Failed to laod media!\n");
+     return 2;
+  }
+  if( !shell.loadTexture("smb_enemies_sheet.bmp") ){
+     printf( "Failed to laod media!\n");
+     return 2;
+  }
+
   //Main loop flag
   bool quit = false;
 
@@ -117,9 +133,12 @@ int main( int argc, char* args[] )
   SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
   SDL_RenderClear( gRenderer );
 
-  cout << mario.xposition() << " " << camera.x << endl;
-  if(mario.xposition() > (camera.x + (8*blockSize))){
-    camera.x += mario.xvelocity();
+  /*if(mario.xposition() > (camera.x+ SCREEN_WIDTH/2)){
+     //camera.x = (mario.xposition() + (blockSize/2) )- SCREEN_WIDTH/2;
+     camera.x = ( (mario.xposition() + (blockSize/2)) - SCREEN_WIDTH/2)+ mario.xvelocity();
+  }*/
+  if(mario.xposition() > 0){
+     camera.x = (mario.xposition() + (blockSize/2)) - SCREEN_WIDTH/2;
   }
 
   //Keep the camera in bounds
@@ -134,8 +153,11 @@ int main( int argc, char* args[] )
   
   mario.render();
   for(int j=0; j<nonmoving.size(); j++){
-	nonmoving[j]->render();
+	nonmoving[j]->render(camera.x, camera.y);
   }
+  
+  shroom.render(camera.x, camera.y);
+  shell.render(camera.x, camera.y);
 
   //Update screen
   SDL_RenderPresent( gRenderer );
@@ -145,7 +167,16 @@ int main( int argc, char* args[] )
   //This next block updates Mario's position
   i++;//increment the loopcount
   mario.move(i,camera.x);  
+  shroom.move(&camera);
+  shell.move(&camera);
 
+  //Check for collisions
+  for(int j = 0; j < nonmoving.size(); j++){
+     mario.collision(camera.x, nonmoving[j]->getPos());
+  }
+  mario.enemyCollision(shroom.getHitBox());
+  mario.enemyCollision(shell.getHitBox());
+  
   if(i>100) nonmoving[4]->collision();
   //delays to set proper framerate
   SDL_Delay(16);

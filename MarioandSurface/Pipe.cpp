@@ -37,14 +37,18 @@ Pipe::Pipe(int xgrid, int ygrid)
   extraPipePosition.h = height - blockSize;
 }
 
-void Pipe::render(){
+void Pipe::render(int camX, int camY){
   //we still need to keep rendering pipe if it's more than 2 blocks above ground
+  renderPosition.x = extraPipePosition.x - camX;
+  renderPosition.y = extraPipePosition.y - camY;
+  renderPosition.h = extraPipePosition.h;
+  renderPosition.w = extraPipePosition.w;
   if((height - 2 * blockSize) != 0){
-    SDL_RenderCopyEx( gRenderer, blockSheet, &extraPipeSprite, &extraPipePosition, 0, NULL, SDL_FLIP_NONE );
+    SDL_RenderCopyEx( gRenderer, blockSheet, &extraPipeSprite, &renderPosition, 0, NULL, SDL_FLIP_NONE );
   }
 
   //call the nonmoving class's render function
-  NonMoving::render();
+  NonMoving::render(camX, camY);
 
 }
 
