@@ -8,22 +8,21 @@
 #include "globalVars.h"
 using namespace std;
 
-const int LEVEL_WIDTH = 2040;
-//const int SCREEN_WIDTH = 640;
-//const int SCREEN_HEIGHT = 540;
-//const int blockSize = 40;
+Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX, int startY ){
+        //nitializes the positions
+        mPosX = startX;
+        mPosY = startY;
+        hitBox.x = mPosX;
+        hitBox.y = mPosY;
+        hitBox.h = blockSize;
+        hitBox.w = blockSize;
 
-
-Enemy::Enemy(int num , int x, int y, int w, int h, int offset ){
-        //nitializes the offsets
-        mPosX = 200;
-        mPosY = 420;
         //initialzes the velocity
-        mVelX = 5;
+        mVelX = 1;
         mVelY = 0;
 
         //clip sprite sheet
-        spriteNum = num;
+        spriteNum = Spritenum;
         spriteXInit = x;
         spriteYInit = y;
         spriteW = w;
@@ -31,40 +30,13 @@ Enemy::Enemy(int num , int x, int y, int w, int h, int offset ){
         spriteOffset = offset;
         initSprite();
         frame = 0;
+        frameDelay = 4; 
 
-}
-
-void Enemy::move(SDL_Rect* camera){
-   //move the enemy loeft or right
-   mPosX += mVelX;
-
-   //object can't go back in map
-   if( mPosX < camera->x ){
-      //run into wall basically
-     mVelX = 0;
-   }
-   //if object reaches the end of the camera screen then bounce back
-   if(mPosX + ENEMY_WIDTH > camera->x+camera->w){
-      mVelX*=(-1);
-   }
-
-   //move the enemy up or down
-   mPosY += mVelY;
-   //if the enemy went too far up or down
-   if( (mPosY < 0) || (mPosY + ENEMY_HEIGHT > SCREEN_HEIGHT) ){
-      //move back
-      mPosY -= mVelY*(-1);
-   }
-
-   frame++; //each time move is called, proress goombas frame count
-   frame = decideFrame(); //decide what frame  the sprite should be on
-                          //this will differentiate for 
-                          //different enemies
 }
 
 void Enemy::render(int camX, int camY){
    //show the dot
-   enemyTexture.render(mPosX - camX, mPosY - camY, &enemySpriteClips[frame/2]);
+   enemyTexture.render(mPosX - camX, mPosY - camY, &enemySpriteClips[frame/4]);
 }
 
 int Enemy::getPosX(){
@@ -89,10 +61,6 @@ void Enemy::initSprite(){
       enemySpriteClips[i].h = spriteH; 
    }
 }
-
-int Enemy::decideFrame(){
-   if((frame/2) >= (spriteNum - 1)){
-      frame = 0;
-   }
-   return frame;
+SDL_Rect Enemy::getHitBox(){
+   return hitBox;
 }

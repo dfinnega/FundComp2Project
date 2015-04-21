@@ -3,6 +3,8 @@
 #include <SDL/SDL_image.h>
 #include "init.h"
 #include "globalVars.h"
+#include "enemy.h"
+#include "Ltexture.h"
 #include <string>
 #include <stdio.h>
 using namespace std;
@@ -61,14 +63,22 @@ bool loadMedia()
         //Loading success flag
         bool success = true;
 
-        //Load PNG texture
+        //Load Mario texture
         marioSheet = loadTexture( "mario.bmp" );
         if( marioSheet == NULL )
         {
                 printf( "Failed to load texture image!\n" );
                 success = false;
         }
-
+	
+	//load Blocks texture
+	blockSheet = loadTexture( "smb_sprites.bmp" );
+	if( blockSheet == NULL )
+        {
+                printf( "Failed to load texture image!\n" );
+                success = false;
+        }
+        
         return success;
 }
 
@@ -78,6 +88,8 @@ void close()
         //Free loaded image
         SDL_DestroyTexture( marioSheet );
         marioSheet = NULL;
+        SDL_DestroyTexture( blockSheet );
+        blockSheet = NULL;
 
         //Destroy window        
         SDL_DestroyRenderer( gRenderer );

@@ -18,35 +18,27 @@ void Koopa::move(SDL_Rect *camera){
 
    //if object reaches the end of the screen then change direction
    //this set up will be used for object collision
-   if( (mPosX + ENEMY_WIDTH > SCREEN_WIDTH) || (mPosX < 0) ){
+   if( (mPosX + ENEMY_WIDTH > LEVEL_WIDTH) || (mPosX < 0) ){
       mVelX *=(-1);
    }
 
    frame++;
    decideFrame();
+
+   //update hitbox
+   hitBox.x = mPosX;
+   hitBox.y = mPosY;
+
 }
 
 void  Koopa::decideFrame(){
-   /*// if moving left
    if(mVelX < 0){
-      if(frame == 0)
-         frame = 1;
-      if(frame == 1)
-         frame = 0;
-   }if(mVelX >= 0){  
-   // if moving right
-      if(frame == 2)
-         frame = 3;
-      if(frame == 3)
-         frame = 2;
-   }*/
-   if(mVelX < 0){
-      if( (frame/4) >= (spriteNum-2)){
+      if( (frame/frameDelay) >= (spriteNum-2)){
          frame = 0;
       }
    } if(mVelX >= 0){
-      if( (frame/4) >= spriteNum){
-         frame = 2*4;//4 is the delay number
+      if( (frame/frameDelay) >= spriteNum){
+         frame = 2*frameDelay;//4 is the delay number
                      //if went back to 2 it would be on
                      //sprite 0 actually
       }

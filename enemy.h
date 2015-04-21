@@ -24,20 +24,28 @@ class Enemy{
    //Maximum axis velocity of the dot
         static const int DOT_VEL = 10;
         //Initializes the variables
-        Enemy(int, int, int, int, int, int);
+        Enemy(int, int, int, int, int, int, int, int);
         //moves the enemy
-        void move(SDL_Rect*);
+        virtual void move(SDL_Rect*) = 0;
+           //this funciton makes the enemy class abstract
+           //this is the only virtual one, because the only thing 
+           //enemies will do differently is move differently
         //shows the enemy on the screen
         void render(int, int);
         //accessor functions
         int getPosX();
         int getPosY();
+        SDL_Rect getHitBox();
 
         bool loadTexture(std:: string path );
+        //determine which sprite to use
+        virtual void decideFrame() = 0;
 
-        private:
+
+        protected:
         //the x and y positions of the enemy
         int mPosX, mPosY;
+        SDL_Rect hitBox; //this will be used for collisions
         //velocity  of the dot
         int mVelX, mVelY;
       
@@ -50,13 +58,15 @@ class Enemy{
         int spriteOffset; //distance between sprites
 
         int frame; //alternates between 0 and some number for motion
+        int frameDelay; //this will be used to slow down rate you rotate
+                        //through the sprite clips
 
         LTexture enemyTexture; //every enemy will HAVE a texture
-        SDL_Rect enemySpriteClips[6];
+        SDL_Rect enemySpriteClips[6];//arbitrsy number
 
         //initialize sprite sheet
         void initSprite();
         //determine which sprite to use
-        int decideFrame();
+        //virtual void decideFrame() = 0;
 };
 #endif

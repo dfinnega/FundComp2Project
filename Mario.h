@@ -9,13 +9,17 @@ class Mario {
   public:
     Mario();
     void handleInput(int);
-    void move(int);
+    void move(int,int);
     void render();
-    int collision();
+    double xposition();
+    double xvelocity();
+    int mapCollision(int, SDL_Rect);
+    void enemyCollision(SDL_Rect); //see if mario dies!
     void deathAnimation();
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier
     enum{left, right};		//enums to make direction easier
+    enum{topCollision, bottomCollision, rightCollision, leftCollision}; 
 
   private:
     double xpos, ypos;		//current x and y positions of Mario
@@ -30,6 +34,8 @@ class Mario {
     //Mario keeps running for 10 frames after a button is released
     int stoppedRunningAt, framesPast;
 
+    int mapCollide[4];	//checks if Mario has map collisions
+
     //This is used to make sure Mario only jumps once
     int alreadyJumped;
     
@@ -39,7 +45,7 @@ class Mario {
     SDL_Rect hitBox;
 
     SDL_RendererFlip flipType;
-    SDL_Rect spriteClip;	//allows the sprites to be stretched to blockSize
+    SDL_Rect spriteLocation;	//allows the sprites to be stretched to blockSize
     SDL_Rect marioSprites[7];	//Holds the clips for each of the Mario sprites
 
     int sprite();		//determines which sprite to render
