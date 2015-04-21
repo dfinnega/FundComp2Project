@@ -403,7 +403,7 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
    if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ) b = 1;
    if( (a ==1) && (b==1)){
       //cout<<"You collided from the right"<<endl;
-      cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
+      //cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
       xpos -=xvel;
       xvel = 0;
       a = 0;
