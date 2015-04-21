@@ -120,20 +120,17 @@ int main( int argc, char* args[] )
 		nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
 		erasedBlocks++;
 	}else if(blockType == "goomba"){
-                Goomba goomba(3, 0, 0, 20, 17, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
-                goomba.loadTexture("smb_enemies_sheet.bmp");
+                Goomba goomba(3, 0, 0, 20, 17, 30, xcoord*blockSize, ycoord*blockSize);
                 Enemy *enemyPtr = &goomba;    
                 enemies.push_back(enemyPtr);
         }else if(blockType == "koopa"){
 		 Koopa koopa(4, 150, 0, 23, 17, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
-                 koopa.loadTexture("smb_enemies_sheet.bmp");
 		Enemy *enemyPtr = &koopa;
 		enemies.push_back(enemyPtr);
         }else if(blockType == "plant"){
-                 Piranha plant(2, 390, 30, 17, 25, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
-                 plant.loadTexture("smb_enemies_sheet.bmp");
-                 Enemy *enemyPtr = &plant;
-                 enemies.push_back(enemyPtr);
+                Piranha plant(2, 390, 30, 17, 25, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
+                Enemy *enemyPtr = &plant;
+                enemies.push_back(enemyPtr);
         }
   }
 

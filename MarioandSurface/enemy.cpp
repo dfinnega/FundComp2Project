@@ -32,6 +32,7 @@ Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX,
         frame = 0;
         frameDelay = 4; 
 
+	loadTexture("smb_enemies_sheet.bmp");
 }
 
 void Enemy::render(int camX, int camY){

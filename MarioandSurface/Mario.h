@@ -34,6 +34,8 @@ class Mario {
     //Mario keeps running for 10 frames after a button is released
     int stoppedRunningAt, framesPast;
 
+    int mapCollide[4];	//checks if Mario has map collisions
+
     //This is used to make sure Mario only jumps once
     int alreadyJumped;
     
@@ -47,9 +49,6 @@ class Mario {
     SDL_Rect marioSprites[7];	//Holds the clips for each of the Mario sprites
 
     int sprite();		//determines which sprite to render
-
-    //loselife/die
-    bool lostLife;
 
     //The following values are static and const, and are the same for every Mario
     //They are declared in Mario.cpp, and the values are obtained from the physics sheet

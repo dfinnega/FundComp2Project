@@ -71,7 +71,7 @@ Mario::Mario(){
   running = 0;
   skidding = 0;
   xpos = 1*blockSize; //MAKE THIS WHATEVER YOU NEED MARIO'S INITIAL POSITION TO BE!
-  ypos = 12*blockSize;
+  ypos = 11*blockSize;
   xvel = 0;
   yvel = 0;
   xdirection = right;
@@ -100,7 +100,7 @@ void Mario::move(int i, int camerax){
 
   //update y position and check if Mario is on the ground       
   ypos += yvel;
-  if(ypos >= 11*blockSize) { ypos = 11*blockSize; onGround = 1; }
+  //if(ypos >= 11*blockSize) { ypos = 11*blockSize; onGround = 1; }
   onGround = 0;
 
   //Update the x position
@@ -362,13 +362,11 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
   }
 
   //top collision  
-  if( Mbottom >= Otop && Mtop < Otop && !mapCollide[topCollision]){
+  if( Mbottom >= Otop && Mtop < Otop && !mapCollide[topCollision] && yvel>=0){
     if( !left && !right ){
 	onGround = 1;
 	ypos = Otop - blockSize;
-	yvel = 0;	
 	mapCollide[topCollision] = 1;
-	cout << "yes" << endl;
     }
   }
 
@@ -380,27 +378,26 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
 	mapCollide[bottomCollision] = 1;
     }
   }
-  
-  /*//left collision
-  if( Mtop <= Obottom && Mbottom > Obottom && !mapCollide[bottomCollision]){
+/*  
+  //Mario's right collision
+  if( Mright >= Oleft && Mleft < Oleft && !mapCollide[rightCollision]){
     if( !above && !below ){
-        xpos = O;
-        xvel *= -1;
-        mapCollide[bottomCollision] = 1;
+        xpos = Oleft - blockSize;
+        xvel = 0;
+        mapCollide[rightCollision] = 1;
     }
-  }*/
-
-/*  //first line checks if x coords line up
-  if( (xpos>object.x && xpos<(object.x+object.w)) || ((xpos+blockSize)>object.x && (xpos+blockSize)<(object.x+object.w))){
-	//Moving down and above 
-	if( ((ypos+blockSize) > object.y) && (ypos < object.y) ){
-		ypos = object.y-blockSize;
-		onGround = 1;
-		yvel = 0;
-	} else {onGround = 0;}
   }
 
-   int a=0,  b=0;
+  //Mario's left collision
+  if( Mleft <= Oright && Mright < Oright && !mapCollide[leftCollision]){
+    if( !above && !below ){
+        xpos = Oright;
+        xvel = 0;
+        mapCollide[leftCollision] = 1;
+    }
+  }
+*/ 
+  int a=0,  b=0;
    //collide into right
    if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ) a = 1;
    if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ) b = 1;
@@ -418,32 +415,12 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
    if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ) b = 1;
    if( (a ==1) && (b==1)){
       //cout<<"You collided from the right"<<endl;
-      cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
+      //cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
       xpos -=xvel;
       xvel = 0;
       a = 0;
       b = 0;
    }
-
-   //collide into top
-   if( ( (ypos+blockSize) >= object.y ) && (ypos < object.y) ) a = 1;
-   if(  ((xpos > object.x) || ( (xpos+blockSize) > (object.x) ) ) && ( (xpos < (object.x + object.w)) || ( (xpos+blockSize) < (object.x + object.w) ) )   ) b = 1;
-   if( (a==1) && (b==1) ){
-      cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
-      ypos -= yvel;
-      yvel = 0;
-      a = 0;
-      b = 0;
-   }
-*/
-   //collide into bottom
-   /*if( ( (ypos) <= (object.y+object.h) ) && ( (ypos+blockSize) > (object.y+object.h)) ) a = 1;
-   if(  ((xpos > object.x) || ( (xpos+blockSize) > (object.x) ) ) && ( (xpos < (object.x + object.w)) || ( (xpos+blockSize) < (object.x + object.w) ) )   ) b = 1;
-      ypos-=yvel;
-      yvel = 0;
-      a = 0;
-      b = 0;
-   }*/
 }
 //==============================================================================================
 void Mario::enemyCollision(SDL_Rect object){
