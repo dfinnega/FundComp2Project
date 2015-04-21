@@ -27,6 +27,7 @@ class Enemy{
         Enemy(int, int, int, int, int, int, int, int);
         //moves the enemy
         virtual void move(SDL_Rect*) = 0;
+        void mapCollision(int , SDL_Rect);
            //this funciton makes the enemy class abstract
            //this is the only virtual one, because the only thing 
            //enemies will do differently is move differently
@@ -46,9 +47,9 @@ class Enemy{
         //the x and y positions of the enemy
         int mPosX, mPosY;
         SDL_Rect hitBox; //this will be used for collisions
-        //velocity  of the dot
-        int mVelX, mVelY;
-      
+        //velocit of x and y positions
+        int mVelX, mVelY;      
+
         //sprite sheets numbers
         int spriteNum; //number of sprites enemy will have
         int spriteXInit; //initial x position

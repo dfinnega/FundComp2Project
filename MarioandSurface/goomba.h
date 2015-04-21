@@ -16,6 +16,8 @@ class Goomba: public Enemy{
 		Goomba(int, int, int, int, int, int, int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
+        private:
+		
 };
 
 #endif

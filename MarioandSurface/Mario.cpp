@@ -82,34 +82,41 @@ Mario::Mario(){
   framesPast = 0;
   alreadyJumped = 0;
   onGround = 1;
+
+  //lostlife/dead
+  lostLife == 1;
 }
 //==============================================================================================
 void Mario::move(int i, int camerax){
   //Move Mario function 
   //This next block updates Mario's position
-  i++;
-  if(i%3 == 0 && running) runningSprite++;
-  else if(i%5 == 0 && !running) runningSprite++;//walking Mario's sprites transition at a rate of 3/5 * running Mario's sprites
-  if(runningSprite>=3) runningSprite=0;
+  if(lostLife){
+     i++;
+     if(i%3 == 0 && running) runningSprite++;
+     else if(i%5 == 0 && !running) runningSprite++;//walking Mario's sprites transition at a rate of 3/5 * running Mario's sprites
+     if(runningSprite>=3) runningSprite=0;
 
   //update y position and check if Mario is on the ground       
-  ypos += yvel;
-  if(ypos >= 11*blockSize) { ypos = 11*blockSize; onGround = 1; }
-  else onGround = 0;
+     ypos += yvel;
+     if(ypos >= 11*blockSize) { ypos = 11*blockSize; onGround = 1; }
+     else onGround = 0;
 
   //Update the x position
-  xpos += xvel;
+     xpos += xvel;
   //Don't let mario go back in the level
-  if( xpos < camerax){
-     xpos -=xvel;//keep xpos, and camera position the same
-     xvel = 0; //don't let mario move
+     if( xpos < camerax){
+        xpos -=xvel;//keep xpos, and camera position the same
+        xvel = 0; //don't let mario move
+     }
+  }else { //this will acutal have to be straight up, then straight down
+      ypos += 1; //made up value 
   }
   // This renders Mario's bottom left at the ypos (for better control of where Mario is)
-  spriteLocation.y = ypos+5;
-  spriteLocation.x = xpos - camerax;
-
+     spriteLocation.y = ypos+5;
+     spriteLocation.x = xpos - camerax;
   //this next line prints Mario's current values
   //printf("yvel: %f xvel: %f spriteLocation.y: %i spriteLocation.x:%i running:%i onGround:%i\n",yvel,xvel,spriteLocation.y,spriteLocation.x,running,onGround);
+
 }
 //==============================================================================================
 void Mario::render(){
@@ -129,17 +136,20 @@ int Mario::sprite(){
   //sprite function
   //decide what spriteLocation to render
   int sprite;
-  //first determine the x direction, default is the direction they were facing
-  if(xdirection == left) { flipType = SDL_FLIP_HORIZONTAL; }
-  else if(xdirection == right) { flipType = SDL_FLIP_NONE; }
+  if(lostLife){
+     //first determine the x direction, default is the direction they were facing
+     if(xdirection == left) { flipType = SDL_FLIP_HORIZONTAL; }
+     else if(xdirection == right) { flipType = SDL_FLIP_NONE; }
 
-  //now decide the type of sprite to render
-  if(!onGround) sprite = jumpr;//off the ground
-  else if(xvel==0) {sprite = standr; runningSprite=0; }
-  else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
-    sprite = skidr;
-  } else sprite = runr1 + runningSprite;
-
+     //now decide the type of sprite to render
+     if(!onGround) sprite = jumpr;//off the ground
+     else if(xvel==0) {sprite = standr; runningSprite=0; }
+     else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
+       sprite = skidr;
+     } else sprite = runr1 + runningSprite;
+  } else{
+     sprite = death;
+  }
   //return the sprite value
   return sprite;
 }
@@ -402,8 +412,7 @@ void Mario::enemyCollision(SDL_Rect object){
    if( (a ==1) && (b==1)){
       //cout<<"You collided from the right"<<endl;
       cout<<"MArio hit an enemy and he should die"<<endl;
-      b = 0;
-      a = 0;
+      lostLife = 0;
    }
 
    //collide into left
@@ -412,8 +421,7 @@ void Mario::enemyCollision(SDL_Rect object){
    if( (a ==1) && (b==1)){
       //cout<<"You collided from the right"<<endl;
       cout<<"Mario hit an enemy and he should die!"<<endl;
-      a = 0;
-      b = 0;
+      lostLife = 0;
    }
 }
 //==============================================================================================

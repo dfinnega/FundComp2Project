@@ -48,6 +48,9 @@ class Mario {
 
     int sprite();		//determines which sprite to render
 
+    //loselife/die
+    bool lostLife;
+
     //The following values are static and const, and are the same for every Mario
     //They are declared in Mario.cpp, and the values are obtained from the physics sheet
     static const double 

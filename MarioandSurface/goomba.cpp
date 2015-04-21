@@ -13,6 +13,7 @@ Goomba::Goomba(int num, int x, int y, int w, int h, int offset, int startX, int 
               //all the constructor has to do
               //is construct an enemy class
               //goombas are basic and have no extra requirements
+   //mVelX = 1;
 }
 
 void Goomba::move(SDL_Rect* camera){
@@ -20,9 +21,9 @@ void Goomba::move(SDL_Rect* camera){
    mPosX += mVelX;
 
    //if object reaches the end of the screen then bounce back
-   if( (mPosX + ENEMY_WIDTH > SCREEN_WIDTH) || (mPosX < 0) ){
+   /*if( (mPosX + ENEMY_WIDTH > SCREEN_WIDTH) || (mPosX < 0) ){
       mVelX*=(-1);
-   }
+   }*/
 
    frame++; //each time move is called, proress goombas frame count
    decideFrame(); //decide what frame  the sprite should be on

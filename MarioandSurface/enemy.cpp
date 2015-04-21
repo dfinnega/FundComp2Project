@@ -13,13 +13,13 @@ Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX,
         mPosX = startX;
         mPosY = startY;
         hitBox.x = mPosX;
-        hitBox.y = mPosY;
+        hitBox.y = mPosY-40;
         hitBox.h = blockSize;
         hitBox.w = blockSize;
 
-        //initialzes the velocity
+        //movement of enemies
         mVelX = 1;
-        mVelY = 0;
+        mVelY = -1;
 
         //clip sprite sheet
         spriteNum = Spritenum;
@@ -63,4 +63,15 @@ void Enemy::initSprite(){
 }
 SDL_Rect Enemy::getHitBox(){
    return hitBox;
+}
+void Enemy::mapCollision(int camerax, SDL_Rect object){
+   int a = 0, b = 0;
+   //left and right collisions
+   if( ( (mPosX+hitBox.w >= object.x) && (mPosX < object.x) ) || ( (mPosX <= object.x+object.w)  &&  (mPosX+hitBox.w > object.x+object.w) ) ) a = 1; 
+   if(  ((mPosY+hitBox.h > object.y) || ( (mPosY) > (object.y) ) ) && ( (mPosY+hitBox.h < (object.y + object.h)) || ( (mPosY) < (object.y + object.h) ) )   ) b = 1;
+   if( (a==1) && (b==1) ){
+cout<<mPosY<<" "<<mPosY+hitBox.h<<" "<<object.y<< " "<<object.y+object.h<<" "<<endl;
+       mPosX -=mVelX;
+       mVelX*=(-1);
+   }
 }

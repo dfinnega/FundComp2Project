@@ -18,10 +18,12 @@ and may not be redistributed without written permission.*/
 #include "enemy.h"
 #include "goomba.h"
 #include "koopa.h"
+#include "piranha.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
 #include <deque>
+#include <vector>
 using namespace std;
 
 //Screen dimension constants 
@@ -48,6 +50,7 @@ int main( int argc, char* args[] )
    //enemies
    Goomba shroom(3, 0, 0, 17, 20, 30, 200, 11*blockSize);
    Koopa shell(4, 150, 0, 17, 23, 30, 300, 11*blockSize);
+   Piranha plant(2, 390, 30, 17, 25, 30, 350, 11*blockSize);
   //Start up SDL and create window
   if( !init() ) {
 	printf( "Failed to initialize!\n" );
@@ -66,6 +69,10 @@ int main( int argc, char* args[] )
      printf( "Failed to laod media!\n");
      return 2;
   }
+  if( !plant.loadTexture("smb_enemies_sheet.bmp") ){
+      printf("Failed to load media!\n");
+      return 2;
+  }
 
   //Main loop flag
   bool quit = false;
@@ -82,6 +89,8 @@ int main( int argc, char* args[] )
 
   //create list of nonmoving elements
   deque<NonMoving*> nonmoving;
+  //create list of enemies
+  vector<Enemy*> enemies;
 
   //Create the level using the world1-1.txt file
   ifstream world11;
@@ -110,7 +119,22 @@ int main( int argc, char* args[] )
 	else if(blockType == "noGround"){//erase a ground block
 		nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
 		erasedBlocks++;
-	}
+	}else if(blockType == "goomba"){
+                Goomba goomba(3, 0, 0, 20, 17, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
+                goomba.loadTexture("smb_enemies_sheet.bmp");
+                Enemy *enemyPtr = &goomba;    
+                enemies.push_back(enemyPtr);
+        }else if(blockType == "koopa"){
+		 Koopa koopa(4, 150, 0, 23, 17, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
+                 koopa.loadTexture("smb_enemies_sheet.bmp");
+		Enemy *enemyPtr = &koopa;
+		enemies.push_back(enemyPtr);
+        }else if(blockType == "plant"){
+                 Piranha plant(2, 390, 30, 17, 25, 30, int(xcoord)*blockSize, int(ycoord)*blockSize);
+                 plant.loadTexture("smb_enemies_sheet.bmp");
+                 Enemy *enemyPtr = &plant;
+                 enemies.push_back(enemyPtr);
+        }
   }
 
   //create the camera
@@ -160,27 +184,45 @@ int main( int argc, char* args[] )
   for(int j=0; j<nonmoving.size(); j++){
 	nonmoving[j]->render(camera.x, camera.y);
   }
-  
+  /*for( int j = 0; j < enemies.size(); j++){
+      enemies[j]->render(camera.x, camera.y);
+cout<<enemies[j]<<endl;
+  }*/
+//cout<<enemies.size()<<endl;
   shroom.render(camera.x, camera.y);
   shell.render(camera.x, camera.y);
+  plant.render(camera.x, camera.y);
 
   //Update screen
   SDL_RenderPresent( gRenderer );
 //===============================================================================================
-
   //Move Mario function 
   //This next block updates Mario's position
   i++;//increment the loopcount
-  mario.move(i,camera.x);  
+  mario.move(i,camera.x);
+/*  for( int j = 0; j < enemies.size(); j++){
+cout<<j<<" enemy size "<<enemies.size()<<endl;
+cout<<"in enemy move call"<<endl;
+cout<<enemies[j]<<endl;
+      enemies[j]->move(&camera);
+  }*/
+    
   shroom.move(&camera);
   shell.move(&camera);
+  plant.move(&camera);
 
   //Check for collisions
-  for(int j = 0; j < nonmoving.size(); j++){
+  for(int j = 0; j < nonmoving.size(); j++){ //map collisions
      mario.mapCollision(camera.x, nonmoving[j]->getPos());
+     shroom.mapCollision(camera.x, nonmoving[j]->getPos());
+     shell.mapCollision(camera.x, nonmoving[j]->getPos());
   }
+  //enemy collisions including enemies bumpimng into enemies
+  shell.mapCollision(camera.x, shroom.getHitBox());
+  shroom.mapCollision(camera.x , shell.getHitBox());
   mario.enemyCollision(shroom.getHitBox());
   mario.enemyCollision(shell.getHitBox());
+  mario.enemyCollision(plant.getHitBox());
   
   if(i>100) nonmoving[4]->collision();
   //delays to set proper framerate
