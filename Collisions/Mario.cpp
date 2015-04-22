@@ -84,35 +84,43 @@ Mario::Mario(){
   onGround = 1;
   for(int i=0; i<4; i++)
 	mapCollide[i]=0;
+
+  //liives and death
+  lostLife = 0;
 }
 //==============================================================================================
 void Mario::move(int i, int camerax){
   //Move Mario function 
   //This next block updates Mario's position
-  i++;
-  //reset the collision status
-  for(int iter=0; iter<4; iter++)
-    mapCollide[iter]=0;  
+  if(!lostLife){
+     i++;
+     //reset the collision status
+     for(int iter=0; iter<4; iter++)
+        mapCollide[iter]=0;  
 
-  if(i%3 == 0 && running) runningSprite++;
-  else if(i%5 == 0 && !running) runningSprite++;//walking Mario's sprites transition at a rate of 3/5 * running Mario's sprites
-  if(runningSprite>=3) runningSprite=0;
+     if(i%3 == 0 && running) runningSprite++;
+     else if(i%5 == 0 && !running) runningSprite++;//walking Mario's sprites transition at a rate of 3/5 * running Mario's sprites
+     if(runningSprite>=3) runningSprite=0;
 
-  //update y position and check if Mario is on the ground       
-  ypos += yvel;
-  //if(ypos >= 11*blockSize) { ypos = 11*blockSize; onGround = 1; }
-  onGround = 0;
+     //update y position and check if Mario is on the ground       
+     ypos += yvel;
+     //if(ypos >= 11*blockSize) { ypos = 11*blockSize; onGround = 1; }
+     onGround = 0;
 
-  //Update the x position
-  xpos += xvel;
-  //Don't let mario go back in the level
-  if( xpos < camerax){
-     xpos -=xvel;//keep xpos, and camera position the same
-     xvel = 0; //don't let mario move
-  }
+     //Update the x position
+     xpos += xvel;
+     //Don't let mario go back in the level
+     if( xpos < camerax){
+        xpos -=xvel;//keep xpos, and camera position the same
+        xvel = 0; //don't let mario move
+     }
   // This renders Mario's bottom left at the ypos (for better control of where Mario is)
-  spriteLocation.y = ypos+5;
-  spriteLocation.x = xpos - camerax;
+
+  }else{
+     deathAnimation();
+  }
+     spriteLocation.y = ypos+5;
+     spriteLocation.x = xpos - camerax;
 
   //this next line prints Mario's current values
   //printf("yvel: %f xvel: %f spriteLocation.y: %i spriteLocation.x:%i running:%i onGround:%i\n",yvel,xvel,spriteLocation.y,spriteLocation.x,running,onGround);
@@ -135,17 +143,21 @@ int Mario::sprite(){
   //sprite function
   //decide what spriteLocation to render
   int sprite;
-  //first determine the x direction, default is the direction they were facing
-  if(xdirection == left) { flipType = SDL_FLIP_HORIZONTAL; }
-  else if(xdirection == right) { flipType = SDL_FLIP_NONE; }
+  if(!lostLife){
+     //first determine the x direction, default is the direction they were facing
+     if(xdirection == left) { flipType = SDL_FLIP_HORIZONTAL; }
+     else if(xdirection == right) { flipType = SDL_FLIP_NONE; }
 
-  //now decide the type of sprite to render
-  if(!onGround) sprite = jumpr;//off the ground
-  else if(xvel==0) {sprite = standr; runningSprite=0; }
-  else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
-    sprite = skidr;
-  } else sprite = runr1 + runningSprite;
+     //now decide the type of sprite to render
+     if(!onGround) sprite = jumpr;//off the ground
+     else if(xvel==0) {sprite = standr; runningSprite=0; }
+     else if((xvel > 0 && xdirection == left) || (xvel < 0 && xdirection == right)) {
+       sprite = skidr;
+     } else sprite = runr1 + runningSprite;
 
+  }else{
+    sprite = death;
+  }
   //return the sprite value
   return sprite;
 }
@@ -353,6 +365,8 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
 
   int above = 0, below = 0, left = 0, right = 0;//Mario is  _____ the object
 
+  if(!lostLife){
+
   if(Mtop > Obottom) below = 1; //Mario is below object
   if(Mbottom < Otop) above = 1; //Mario is above object
   if(Mleft > Oright) right = 1; //Mario is right of object
@@ -378,26 +392,7 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
 	mapCollide[bottomCollision] = 1;
     }
   }
-/*  
-  //Mario's right collision
-  if( Mright >= Oleft && Mleft < Oleft && !mapCollide[rightCollision]){
-    if( !above && !below ){
-        xpos = Oleft - blockSize;
-        xvel = 0;
-        mapCollide[rightCollision] = 1;
-    }
-  }
-
-  //Mario's left collision
-  if( Mleft <= Oright && Mright < Oright && !mapCollide[leftCollision]){
-    if( !above && !below ){
-        xpos = Oright;
-        xvel = 0;
-        mapCollide[leftCollision] = 1;
-    }
-  }
-*/ 
-  int a=0,  b=0;
+   int a =0, b=0;
    //collide into right
    if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ) a = 1;
    if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ) b = 1;
@@ -421,9 +416,10 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
       a = 0;
       b = 0;
    }
+   }
 }
 //==============================================================================================
-void Mario::enemyCollision(SDL_Rect object){
+int Mario::enemyCollision(SDL_Rect object){
    int a=0,  b=0;
    //collide into right
    if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ) a = 1;
@@ -433,6 +429,8 @@ void Mario::enemyCollision(SDL_Rect object){
       cout<<"MArio hit an enemy and he should die"<<endl;
       b = 0;
       a = 0;
+      lostLife = 1;
+      return 1;
    }
 
    //collide into left
@@ -443,7 +441,11 @@ void Mario::enemyCollision(SDL_Rect object){
       cout<<"Mario hit an enemy and he should die!"<<endl;
       a = 0;
       b = 0;
+      lostLife = 1;
+      return 1;
    }
+   
+   return 0;
 }
 //==============================================================================================
 double Mario::xposition(){
@@ -451,4 +453,22 @@ double Mario::xposition(){
 }
 double Mario::xvelocity(){
   return xvel;
+}
+
+void Mario::deathAnimation(){
+   yvel = 1;
+   //double start = ypos;
+   int goinUp= 0; 
+   //int goinDown = 1;
+   //sprite = death;
+   if(ypos > 250 ){
+      ypos-=yvel;
+      spriteLocation.y = ypos+5;
+      goinUp = 1;
+   }
+   if( (ypos < 520)&& !goinUp ){
+      ypos+=yvel;
+      spriteLocation.y = ypos;
+      //render();
+   }
 }

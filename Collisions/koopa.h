@@ -13,6 +13,8 @@ class Koopa: public Enemy{
 		Koopa(int, int,int, int, int, int, int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
+         private:
+		//int mVelX;
 };
 
 #endif

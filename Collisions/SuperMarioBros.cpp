@@ -143,9 +143,13 @@ int main( int argc, char* args[] )
   //Check for collisions
   for(int j = 0; j < nonmoving.size(); j++){
      mario.mapCollision(camera.x, nonmoving[j]->getPos());
+     shroom.mapCollision(camera.x, nonmoving[j]->getPos());
+     shell.mapCollision(camera.x, nonmoving[j]->getPos());
   }
   mario.enemyCollision(shroom.getHitBox());
-  mario.enemyCollision(shell.getHitBox());
+  mario.enemyCollision(shell.getHitBox()); 
+  shroom.mapCollision(camera.x, shell.getHitBox());
+  shell.mapCollision(camera.x, shroom.getHitBox());
   
 //===============================================================================================
 //Rendering function

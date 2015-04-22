@@ -8,8 +8,8 @@ NonMoving::NonMoving(int xgrid, int ygrid){
   position.x = (xgrid-1) * blockSize;
   position.y = (ygrid-1) * blockSize;
 //set the position's width and height (overwritten in pipe)
-  position.w = blockSize;
-  position.h = blockSize;
+  position.w = blockSize-3;
+  position.h = blockSize+3;
 
 //set the initial render height and width (overwritten in Pipe)
   renderPosition.h = blockSize;
