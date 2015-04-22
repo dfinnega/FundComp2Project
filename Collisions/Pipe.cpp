@@ -15,8 +15,8 @@ Pipe::Pipe(int xgrid, int ygrid)
   
 
 //since the pipe has special width and height, redefine the width and height
-  position.w = size;
-  position.h = height;
+  position.w = size-3;
+  position.h = height+3;
 
 //pipe sprite
   sprite.x = 614;
