@@ -39,6 +39,7 @@ enemy.o: enemy.cpp
 
 goomba.o: goomba.cpp
 	g++ goomba.cpp -lSDL2 -c
+
 koopa.o: koopa.cpp
 	g++ koopa.cpp -lSDL2 -c
 

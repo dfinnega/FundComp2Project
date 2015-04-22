@@ -12,6 +12,7 @@ Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX,
         //nitializes the positions
         mPosX = startX;
         mPosY = startY;
+	cout << "mPosY=" << mPosY << endl;
         hitBox.x = mPosX;
         hitBox.y = mPosY-40;
         hitBox.h = blockSize;
@@ -38,6 +39,7 @@ Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX,
 void Enemy::render(int camX, int camY){
    //show the dot
    enemyTexture.render(mPosX - camX, mPosY - camY, &enemySpriteClips[frame/4]);
+   cout << camY << " " << mPosY << endl;
 }
 
 int Enemy::getPosX(){
@@ -71,7 +73,7 @@ void Enemy::mapCollision(int camerax, SDL_Rect object){
    if( ( (mPosX+hitBox.w >= object.x) && (mPosX < object.x) ) || ( (mPosX <= object.x+object.w)  &&  (mPosX+hitBox.w > object.x+object.w) ) ) a = 1; 
    if(  ((mPosY+hitBox.h > object.y) || ( (mPosY) > (object.y) ) ) && ( (mPosY+hitBox.h < (object.y + object.h)) || ( (mPosY) < (object.y + object.h) ) )   ) b = 1;
    if( (a==1) && (b==1) ){
-cout<<mPosY<<" "<<mPosY+hitBox.h<<" "<<object.y<< " "<<object.y+object.h<<" "<<endl;
+//cout<<mPosY<<" "<<mPosY+hitBox.h<<" "<<object.y<< " "<<object.y+object.h<<" "<<endl;
        mPosX -=mVelX;
        mVelX*=(-1);
    }
