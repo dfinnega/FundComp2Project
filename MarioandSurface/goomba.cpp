@@ -30,6 +30,9 @@ void Goomba::move(SDL_Rect* camera){
       if( (mPosX + ENEMY_WIDTH > LEVEL_WIDTH) || (mPosX < 0) ){
          mVelX*=(-1);
       }
+      
+      //move the enemy vertifcally
+      mPosY+=mVelY;
 
       frame++; //each time move is called, proress goombas frame count
       decideFrame(); //decide what frame  the sprite should be on
@@ -39,6 +42,8 @@ void Goomba::move(SDL_Rect* camera){
    //update hitbox
    hitBox.x = mPosX;
    hitBox.y = mPosY;
+
+   mVelY = 5; //assume goomba is always falling
 
 }
 
