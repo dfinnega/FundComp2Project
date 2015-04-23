@@ -18,7 +18,7 @@ and may not be redistributed without written permission.*/
 #include "enemy.h"
 #include "goomba.h"
 #include "koopa.h"
-#include "piranha.h"
+//#include "piranha.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -47,10 +47,6 @@ SDL_Texture* blockSheet = NULL;
 //Begin main program
 int main( int argc, char* args[] )
 {
-   //enemies
-   Goomba shroom(3, 0, 0, 17, 20, 30, 200, 11*blockSize);
-   Koopa shell(4, 150, 0, 17, 23, 30, 300, 11*blockSize);
-   Piranha plant(2, 390, 30, 17, 25, 30, 350, 11*blockSize);
   //Start up SDL and create window
   if( !init() ) {
 	printf( "Failed to initialize!\n" );
@@ -61,7 +57,7 @@ int main( int argc, char* args[] )
 	printf( "Failed to load media!\n" );
 	return 2;
   }
-  if( !shroom.loadTexture("smb_enemies_sheet.bmp") ){
+  /*if( !shroom.loadTexture("smb_enemies_sheet.bmp") ){
      printf( "Failed to laod media!\n");
      return 2;
   }
@@ -72,7 +68,7 @@ int main( int argc, char* args[] )
   if( !plant.loadTexture("smb_enemies_sheet.bmp") ){
       printf("Failed to load media!\n");
       return 2;
-  }
+  }*/
 
   //Main loop flag
   bool quit = false;
@@ -120,15 +116,15 @@ int main( int argc, char* args[] )
 		nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
 		erasedBlocks++;
 	} else if(blockType == "goomba"){
-                enemies.push_back(new Goomba(3, 0, 0, 17, 20, 30, xcoord*blockSize, ycoord*blockSize));
+                enemies.push_back(new Goomba( xcoord*blockSize, ycoord*blockSize));
 		cout<<"New Goomba" << endl;
         } else if(blockType == "koopa"){
-		enemies.push_back(new Koopa(4, 150, 0, 17, 23, 30, xcoord*blockSize, ycoord*blockSize));
+		enemies.push_back(new Koopa( xcoord*blockSize, ycoord*blockSize));
 		cout<<"New koopa" << endl;
-        } else if(blockType == "plant"){
+        }/* else if(blockType == "plant"){
                 enemies.push_back(new Piranha(2, 390, 30, 17, 25, 30, xcoord*blockSize, ycoord*blockSize));
 		cout<<"New Piranha" << endl;
-        }
+        }*/
   }
 
   //create the camera
@@ -181,9 +177,9 @@ int main( int argc, char* args[] )
   for( int j = 0; j < enemies.size(); j++){
       enemies[j]->render(camera.x, camera.y);
   }
-  shroom.render(camera.x, camera.y);
-  shell.render(camera.x, camera.y);
-  plant.render(camera.x, camera.y);
+  //shroom.render(camera.x, camera.y);
+  //shell.render(camera.x, camera.y);
+  //plant.render(camera.x, camera.y);
 
   //Update screen
   SDL_RenderPresent( gRenderer );
@@ -193,29 +189,27 @@ int main( int argc, char* args[] )
   i++;//increment the loopcount
   mario.move(i,camera.x);
   for( int j = 0; j < enemies.size(); j++){
-//cout<<j<<" enemy size "<<enemies.size()<<endl;
-//cout<<"in enemy move call"<<endl;
-//cout<<enemies[j]<<endl;
       enemies[j]->move(&camera);
   }
-    
-  shroom.move(&camera);
-  shell.move(&camera);
-  plant.move(&camera);
 
   //Check for collisions
   for(int j = 0; j < nonmoving.size(); j++){ //map collisions
      mario.mapCollision(camera.x, nonmoving[j]->getPos());
-     shroom.mapCollision(camera.x, nonmoving[j]->getPos());
-     shell.mapCollision(camera.x, nonmoving[j]->getPos());
+     for(int k = 0; k <enemies.size(); k++){
+        enemies[k]->mapCollision(camera.x, nonmoving[j]->getPos());
+     }
   }
   //enemy collisions including enemies bumpimng into enemies
-  shell.mapCollision(camera.x, shroom.getHitBox());
-  shroom.mapCollision(camera.x , shell.getHitBox());
-  mario.enemyCollision(shroom.getHitBox());
-  mario.enemyCollision(shell.getHitBox());
-  mario.enemyCollision(plant.getHitBox());
-  
+  for(int j = 0; j <enemies.size(); j++){
+     enemies[j]->marioCollision(camera.x,mario.getHitBox());
+  }
+  for(int j = 0; j < enemies.size(); j++){
+     mario.enemyCollision(enemies[j]->getHitBox());
+     for(int k = 0; k <enemies.size(); k++){ //enemies can collide with each other
+        if(j != k) enemies[j]->mapCollision(camera.x, enemies[k]->getHitBox());
+     }
+  } 
+
   if(i>100) nonmoving[4]->collision();
   //delays to set proper framerate
   SDL_Delay(10);

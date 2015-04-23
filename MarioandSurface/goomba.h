@@ -13,11 +13,10 @@ using namespace std;
 
 class Goomba: public Enemy{
 	public:  
-		Goomba(int, int, int, int, int, int, int, int);
+		Goomba( int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
-        private:
-		
+                int marioCollision(int, SDL_Rect);
 };
 
 #endif

@@ -66,6 +66,11 @@ Mario::Mario(){
   spriteLocation.y = 200;
   spriteLocation.w = blockSize;
   spriteLocation.h = blockSize;
+
+  hitBox.x = 50;
+  hitBox.y = 200;
+  hitBox.w = blockSize;
+  hitBox.h = blockSize;
   
   //initialize movement values
   running = 0;
@@ -113,6 +118,10 @@ void Mario::move(int i, int camerax){
   // This renders Mario's bottom left at the ypos (for better control of where Mario is)
   spriteLocation.y = ypos+5;
   spriteLocation.x = xpos - camerax;
+
+  //update hitbox
+  hitBox.x = xpos;
+  hitBox.y = ypos;
 
   //this next line prints Mario's current values
   //printf("yvel: %f xvel: %f spriteLocation.y: %i spriteLocation.x:%i running:%i onGround:%i\n",yvel,xvel,spriteLocation.y,spriteLocation.x,running,onGround);
@@ -421,9 +430,47 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
       a = 0;
       b = 0;
    }
+
+   //update hitbox
+   hitBox.x = xpos;
+   hitBox.y = ypos;
 }
 //==============================================================================================
 void Mario::enemyCollision(SDL_Rect object){
+  /*int Mtop = ypos;			//Mario's top
+  int Mbottom = ypos + blockSize;	//Mario's bottom
+  int Mleft = xpos;			//Mario's left
+  int Mright = xpos + blockSize;	//Mario's right
+  //object's coordinates (easier to work with)
+  int Otop = object.y;			//Object's top
+  int Obottom = object.y + object.h;	//Object's bottom
+  int Oleft = object.x;			//Object's left
+  int Oright = object.x + object.w;	//Object's right
+
+  int above = 0, below = 0, left = 0, right = 0;//Mario is  _____ the object
+
+  if(Mtop > Obottom) below = 1; //Mario is below object
+  if(Mbottom < Otop) above = 1; //Mario is above object
+  if(Mleft > Oright) right = 1; //Mario is right of object
+  if(Mright < Oleft) left = 1; //Mario is left of object
+  if(above || below || left || right){
+	//return 0; //There is no collision
+  }
+  int collision = 0;
+
+  //top collision  
+  if( Mbottom >= Otop && Mtop < Otop && !mapCollide[topCollision] && yvel>=0){
+    if( !left && !right ){
+	onGround = 1;
+	ypos = Otop - blockSize;
+	mapCollide[topCollision] = 1;
+        
+cout<<"enemy should die"<<endl;
+collision = 1;
+    }
+  }
+*/
+  
    int a=0,  b=0;
    //collide into right
    if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ) a = 1;
@@ -451,4 +498,8 @@ double Mario::xposition(){
 }
 double Mario::xvelocity(){
   return xvel;
+}
+
+SDL_Rect Mario::getHitBox(){
+   return hitBox;
 }

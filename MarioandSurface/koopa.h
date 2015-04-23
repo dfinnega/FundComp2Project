@@ -10,9 +10,10 @@ using namespace std;
 
 class Koopa: public Enemy{
 	public:
-		Koopa(int, int,int, int, int, int, int, int);
+		Koopa( int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
+                int marioCollision(int, SDL_Rect);
          private:
 		//int mVelX;
 };

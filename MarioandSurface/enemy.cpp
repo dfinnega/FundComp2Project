@@ -8,7 +8,7 @@
 #include "globalVars.h"
 using namespace std;
 
-Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX, int startY ){
+Enemy::Enemy( int startX, int startY ){
         //nitializes the positions
         mPosX = startX;
         mPosY = startY;
@@ -19,27 +19,25 @@ Enemy::Enemy(int Spritenum , int x, int y, int w, int h, int offset, int startX,
         hitBox.w = blockSize;
 
         //movement of enemies
-        mVelX = 1;
+        mVelX = -1;
         mVelY = -1;
 
         //clip sprite sheet
-        spriteNum = Spritenum;
-        spriteXInit = x;
-        spriteYInit = y;
-        spriteW = w;
-        spriteH = h;
-        spriteOffset = offset;
-        initSprite();
         frame = 0;
         frameDelay = 4; 
+
+        //enemy is initially alive
+        alive = 1;
 
 	loadTexture("smb_enemies_sheet.bmp");
 }
 
 void Enemy::render(int camX, int camY){
    //show the dot
-   enemyTexture.render(mPosX - camX, mPosY - camY, &enemySpriteClips[frame/4]);
-   cout << camY << " " << mPosY << endl;
+   if( mPosX >= camX && mPosX <= camX+SCREEN_WIDTH){
+      enemyTexture.render(mPosX - camX, mPosY - camY, &enemySpriteClips[frame/4]);
+      cout << camY << " " << mPosY << endl;
+   }
 }
 
 int Enemy::getPosX(){

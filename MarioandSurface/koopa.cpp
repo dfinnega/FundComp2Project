@@ -6,27 +6,32 @@
 #include "koopa.h"
 using namespace std;
 
-Koopa::Koopa(int num, int x, int y, int w, int h, int offset, int startX, int startY): Enemy(num, x, y, w, h, offset, startX, startY){
+Koopa::Koopa( int startX, int startY): Enemy( startX, startY){
 	//koopas are basic too, nothing else special to them
-
-   mVelX = 1;
-
+   spriteNum = 4;
+   spriteXInit = 150;
+   spriteYInit = 0;
+   spriteW = 17;
+   spriteH = 23;
+   spriteOffset = 30;
+   initSprite();
 }
 
 void Koopa::move(SDL_Rect *camera){
-  //move enemy to the left or right
-   mPosX += mVelX;
+   //move enemy to the left or right
+   if( mPosX >= camera->x && mPosX <= camera->x+SCREEN_WIDTH){
+      mPosX += mVelX;
 
-   //object can't go back in map
+      //if object reaches the end of the screen then change direction
+      //this set up will be used for object collision
+      if( (mPosX + ENEMY_WIDTH > LEVEL_WIDTH) || (mPosX < 0) ){
+         mVelX *=(-1);
+      }
 
-   //if object reaches the end of the screen then change direction
-   //this set up will be used for object collision
-   /*if( (mPosX + ENEMY_WIDTH > SCREEN_WIDTH) || (mPosX < 0) ){
-      mVelX *=(-1);
-   }*/
+      frame++;
+      decideFrame();
 
-   frame++;
-   decideFrame();
+   }   
 
    //update hitbox
    hitBox.x = mPosX;
@@ -46,4 +51,8 @@ void  Koopa::decideFrame(){
                      //sprite 0 actually
       }
    }
+}
+
+int Koopa::marioCollision(int, SDL_Rect){
+   return 0;
 }

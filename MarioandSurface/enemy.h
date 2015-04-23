@@ -24,10 +24,11 @@ class Enemy{
    //Maximum axis velocity of the dot
         static const int DOT_VEL = 10;
         //Initializes the variables
-        Enemy(int, int, int, int, int, int, int, int);
+        Enemy( int, int);
         //moves the enemy
         virtual void move(SDL_Rect*) = 0;
         void mapCollision(int , SDL_Rect);
+        virtual int marioCollision( int, SDL_Rect) = 0; //detect getting killed by mario
            //this funciton makes the enemy class abstract
            //this is the only virtual one, because the only thing 
            //enemies will do differently is move differently
@@ -62,12 +63,12 @@ class Enemy{
         int frameDelay; //this will be used to slow down rate you rotate
                         //through the sprite clips
 
+        bool alive; //flag that enemy is alive/dead
+
         LTexture enemyTexture; //every enemy will HAVE a texture
         SDL_Rect enemySpriteClips[6];//arbitrsy number
 
         //initialize sprite sheet
         void initSprite();
-        //determine which sprite to use
-        //virtual void decideFrame() = 0;
 };
 #endif
