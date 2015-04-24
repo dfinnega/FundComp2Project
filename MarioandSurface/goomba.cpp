@@ -21,6 +21,14 @@ Goomba::Goomba( int startX, int startY): Enemy( startX, startY){
 
 }
 
+void Goomba::initSprite(){
+   for(int i = 0; i < spriteNum; i++){
+      enemySpriteClips[i].x = spriteXInit + i*(spriteOffset);
+      enemySpriteClips[i].y = spriteYInit;
+      enemySpriteClips[i].w = spriteW;
+      enemySpriteClips[i].h = spriteH; 
+   }
+}
 void Goomba::move(SDL_Rect* camera){
    //move the enemy loeft or right
    if( mPosX >= camera->x && mPosX <=camera->x+SCREEN_WIDTH){
@@ -53,49 +61,26 @@ void Goomba::decideFrame(){
          frame = 0;
       }
    }else{
-      frame = 10; //this should make the sprite the squish
+      frame = (3*frameDelay)-2; //this should make the sprite the squish
+      deathCount++; //increment time its been dead
+      /*if(deathCount >= 23){
+         alive = 2; //just some flag value
+      }*/
    }
 
 }
 
-int Goomba::marioCollision(int cameraX, SDL_Rect  mario){
+double Goomba::marioCollision(int cameraX, SDL_Rect  mario){
 
-if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
-
-   //for readability
-   //enemy coordinates
-   int enemyTop = mPosY;
-   int enemyBottom = mPosY+blockSize;
-   int enemyLeft = mPosX;
-   int enemyRight = mPosX+blockSize;
-   //mariocoordinate
-   int Mtop = mario.y;
-   int Mbottom = mario.y+blockSize;
-   int Mleft = mario.x;
-   int Mright = mario.x+blockSize;
- 
-  //The enemy is _____ Mario
-   int above = 0, below = 0, right = 0, left = 0;
-   if(enemyTop > Mbottom) below = 1; //enemy is below mario
-   if(enemyBottom < Mtop) above = 1; //enemy is above mario
-   if(enemyLeft > Mright) right = 1; //enemy is right of mario
-   if(enemyRight < Mleft) left = 1; //enemy is left of mario
-   if( above || below || left || right){
-      return 0; //There is no collision
-cout<<"no collision"<<endl;
-   }
-
-   //Check if mario is on top of enemy
-   //aka if enemy has bottom collision with 
-   //mario 
-   if(enemyTop <= Mbottom && enemyBottom > Mbottom && alive){
-cout<<"top part detected"<<endl;
-      if(!left && !right){
-         alive = 0;
-         mPosX -=mVelX;
-         mVelX = 0;
-         cout<<"Mario hit top of goomba!"<<endl;
+   if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
+      if(alive){
+         if(topCollision(cameraX, mario)){
+            alive = 0;
+            mPosX-=mVelX;
+            mVelX = 0;
+            hitBox.h-=10;//make lil goomba appear on ground
+            return -10; // make mario hop up a bit
+         }
       }
-   }
    }
 }

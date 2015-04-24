@@ -9,6 +9,7 @@
 #include <string>
 #include "globalVars.h"
 #include "Ltexture.h"
+#include <SDL2/SDL.h>
 using namespace std;
 
 //extern const int LEVEL_WIDTH;
@@ -28,21 +29,27 @@ class Enemy{
         //moves the enemy
         virtual void move(SDL_Rect*) = 0;
         void mapCollision(int , SDL_Rect);
-        virtual int marioCollision( int, SDL_Rect) = 0; //detect getting killed by mario
+        virtual double marioCollision(int, SDL_Rect) = 0; //detect getting killed by mario 
+        int topCollision(int, SDL_Rect); //detect getting hit from above
            //this funciton makes the enemy class abstract
            //this is the only virtual one, because the only thing 
            //enemies will do differently is move differently
-        //shows the enemy on the screen
+        
+	//shows the enemy on the screen
         void render(int, int);
-        //accessor functions
+        
+	//accessor functions
         int getPosX();
         int getPosY();
         SDL_Rect getHitBox();
 
         bool loadTexture(std:: string path );
-        //determine which sprite to use
+        
+	//determine which sprite to use
         virtual void decideFrame() = 0;
 
+        int getDeathCount(); //return how long enemy has been dead for
+        int getAlive();
 
         protected:
         //the x and y positions of the enemy
@@ -64,11 +71,13 @@ class Enemy{
                         //through the sprite clips
 
         bool alive; //flag that enemy is alive/dead
+        int deathCount; //will be used to keep enemy on screen for just a bit after they are dead        
 
         LTexture enemyTexture; //every enemy will HAVE a texture
         SDL_Rect enemySpriteClips[6];//arbitrsy number
 
         //initialize sprite sheet
-        void initSprite();
+        virtual void initSprite() = 0;
+
 };
 #endif

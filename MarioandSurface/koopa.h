@@ -13,9 +13,10 @@ class Koopa: public Enemy{
 		Koopa( int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
-                int marioCollision(int, SDL_Rect);
+                double marioCollision(int, SDL_Rect);
          private:
-		//int mVelX;
+		void initSprite();
+                int hitCount; //detect how many times mario has hit it
 };
 
 #endif

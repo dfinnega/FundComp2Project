@@ -47,6 +47,7 @@ SDL_Texture* blockSheet = NULL;
 //Begin main program
 int main( int argc, char* args[] )
 {
+int endgame = 0;
   //Start up SDL and create window
   if( !init() ) {
 	printf( "Failed to initialize!\n" );
@@ -121,10 +122,7 @@ int main( int argc, char* args[] )
         } else if(blockType == "koopa"){
 		enemies.push_back(new Koopa( xcoord*blockSize, ycoord*blockSize));
 		cout<<"New koopa" << endl;
-        }/* else if(blockType == "plant"){
-                enemies.push_back(new Piranha(2, 390, 30, 17, 25, 30, xcoord*blockSize, ycoord*blockSize));
-		cout<<"New Piranha" << endl;
-        }*/
+        }
   }
 
   //create the camera
@@ -177,9 +175,6 @@ int main( int argc, char* args[] )
   for( int j = 0; j < enemies.size(); j++){
       enemies[j]->render(camera.x, camera.y);
   }
-  //shroom.render(camera.x, camera.y);
-  //shell.render(camera.x, camera.y);
-  //plant.render(camera.x, camera.y);
 
   //Update screen
   SDL_RenderPresent( gRenderer );
@@ -200,15 +195,60 @@ int main( int argc, char* args[] )
      }
   }
   //enemy collisions including enemies bumpimng into enemies
-  for(int j = 0; j <enemies.size(); j++){
-     enemies[j]->marioCollision(camera.x,mario.getHitBox());
-  }
+  //for(int j = 0; j <enemies.size(); j++){
+    // enemies[j]->marioCollision(camera.x,mario.getHitBox()); //tried to give mario a bost when he jumps off enemies
+  //}
   for(int j = 0; j < enemies.size(); j++){
-     mario.enemyCollision(enemies[j]->getHitBox());
+     if(enemies[j]->getAlive()){
+        mario.enemyCollision(enemies[j]->getHitBox());//check if mario squashed an enemy
+     }
      for(int k = 0; k <enemies.size(); k++){ //enemies can collide with each other
-        if(j != k) enemies[j]->mapCollision(camera.x, enemies[k]->getHitBox());
+        if(j != k) enemies[j]->mapCollision(camera.x, enemies[k]->getHitBox());//avoid checkin gif enemy collides with itself
      }
   } 
+
+  //check if mario is dead // this should be a function
+  if( !mario.getAlive()){
+cout<<"mario should be dead"<<endl;
+     //this will be the death animation basically
+     int goingUp = 1;
+     double deathY = mario.yposition();
+     mario.setYvelocity(-1); //go up screen first
+     while(mario.yposition() < 520){ //until mario is below the screen
+        if(mario.yposition() > deathY-200 && goingUp){
+           mario.move(i, camera.x);
+        }
+        if(mario.yposition() <= deathY-50){
+           goingUp = 0;
+           mario.setYvelocity(1); //mario starts going down
+        }
+        if(!goingUp){
+          mario.move(i, camera.x);
+        }
+        //render mario and all current objects on the screen
+  SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
+  SDL_RenderClear( gRenderer );
+        for(int j=0; j<nonmoving.size(); j++){
+           nonmoving[j]->render(camera.x, camera.y);
+        }
+        for( int j = 0; j < enemies.size(); j++){
+           enemies[j]->render(camera.x, camera.y);
+        }
+        mario.render();
+        SDL_Delay(10);
+        
+  SDL_RenderPresent( gRenderer );
+     }
+     endgame = 1;
+  }
+  if(endgame == 1) break;
+  //Check if any enemies have died, if so remove them from gameplay
+  deque<Enemy*>::iterator enemyIt; //note this is a pointer to a pointer
+  for(enemyIt = enemies.begin(); enemyIt != enemies.end(); enemyIt++){\
+     if( (*enemyIt)->getDeathCount() >= 25 ){
+        enemies.erase(enemyIt);
+     }  
+  }
 
   if(i>100) nonmoving[4]->collision();
   //delays to set proper framerate

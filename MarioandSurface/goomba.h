@@ -16,7 +16,9 @@ class Goomba: public Enemy{
 		Goomba( int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
-                int marioCollision(int, SDL_Rect);
+                double marioCollision(int, SDL_Rect);
+        protected:
+		void initSprite();
 };
 
 #endif

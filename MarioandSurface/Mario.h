@@ -13,10 +13,15 @@ class Mario {
     void render();
     double xposition();
     double xvelocity();
+    double yposition();
+    void setYvelocity(double);
     int mapCollision(int, SDL_Rect);
     void enemyCollision(SDL_Rect); //see if mario dies!
     void deathAnimation();
     SDL_Rect getHitBox();
+
+    void setYVel(double);
+    bool getAlive();
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier
     enum{left, right};		//enums to make direction easier
@@ -50,6 +55,8 @@ class Mario {
     SDL_Rect marioSprites[7];	//Holds the clips for each of the Mario sprites
 
     int sprite();		//determines which sprite to render
+
+    bool alive; //is mario alive or not
 
     //The following values are static and const, and are the same for every Mario
     //They are declared in Mario.cpp, and the values are obtained from the physics sheet
