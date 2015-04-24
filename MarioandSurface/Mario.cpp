@@ -62,8 +62,8 @@ Mario::Mario(){
   //initialize rendering values
   flipType = SDL_FLIP_NONE;
 
-  spriteLocation.x = 50;
-  spriteLocation.y = 200;
+  spriteLocation.x = 1*blockSize;
+  spriteLocation.y = 11*blockSize;
   spriteLocation.w = blockSize;
   spriteLocation.h = blockSize;
 
@@ -92,6 +92,7 @@ Mario::Mario(){
 
   //mario start off alive
   alive = 1;
+  lifeCount = 3; //mario starts off with three lives
 }
 //==============================================================================================
 void Mario::move(int i, int camerax){
@@ -164,7 +165,6 @@ int Mario::sprite(){
      } else sprite = runr1 + runningSprite;
   }else{
      ypos+=yvel;
-cout<<ypos<<" "<<yvel<<endl;
      sprite = death;
   }
   //return the sprite value
@@ -451,6 +451,7 @@ void Mario::enemyCollision(SDL_Rect object){
          //cout<<"You collided from the right"<<endl;
          cout<<"MArio hit an enemy and he should die"<<endl;
          alive= 0;
+         lifeCount--;
       }
    }
 
@@ -460,6 +461,7 @@ void Mario::enemyCollision(SDL_Rect object){
          //cout<<"You collided from the right"<<endl;
          cout<<"Mario hit an enemy and he should die!"<<endl;
          alive = 0;
+         lifeCount--;
       }
    }
 }
@@ -489,4 +491,44 @@ void Mario::setYVel(double newYVel){
 
 bool Mario::getAlive(){
    return alive;
+}
+
+int Mario::getLifeCount(){
+   return lifeCount;
+}
+
+void Mario::initialize(){
+  //initialize rendering values
+  flipType = SDL_FLIP_NONE;
+
+  spriteLocation.x = 1*blockSize;
+  spriteLocation.y = 11*blockSize;
+  spriteLocation.w = blockSize;
+  spriteLocation.h = blockSize;
+
+  hitBox.x = 50;
+  hitBox.y = 200;
+  hitBox.w = blockSize-5;
+  hitBox.h = blockSize-5;
+
+  //initialize movement values
+  running = 0;
+  skidding = 0;
+  xpos = 1*blockSize; //MAKE THIS WHATEVER YOU NEED MARIO'S INITIAL POSITION TO BE!
+  ypos = 11*blockSize;
+  xvel = 0;
+  yvel = 0;
+  xdirection = right;
+  xaccel = 0;
+  xmaxSpeed = 0;
+  xinitialJumpVel = 0;
+  stoppedRunningAt = 0;
+  framesPast = 0;
+  alreadyJumped = 0;
+  onGround = 1;
+  for(int i=0; i<4; i++)
+        mapCollide[i]=0;
+
+  //mario start off alive
+  alive = 1;
 }

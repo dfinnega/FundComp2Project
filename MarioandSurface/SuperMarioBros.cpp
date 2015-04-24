@@ -47,7 +47,7 @@ SDL_Texture* blockSheet = NULL;
 //Begin main program
 int main( int argc, char* args[] )
 {
-int endgame = 0;
+bool gameover = 0; //use to detec if mario lost three lives and the game is over
   //Start up SDL and create window
   if( !init() ) {
 	printf( "Failed to initialize!\n" );
@@ -61,25 +61,7 @@ int endgame = 0;
   /*if( !shroom.loadTexture("smb_enemies_sheet.bmp") ){
      printf( "Failed to laod media!\n");
      return 2;
-  }
-  if( !shell.loadTexture("smb_enemies_sheet.bmp") ){
-     printf( "Failed to laod media!\n");
-     return 2;
-  }
-  if( !plant.loadTexture("smb_enemies_sheet.bmp") ){
-      printf("Failed to load media!\n");
-      return 2;
   }*/
-
-  //Main loop flag
-  bool quit = false;
-
-  //Event handler, only accepts the esc key to quit program
-  //all other events are processed by Mario's class
-  SDL_Event e;
-
-  //loop counter, to determine timing and such
-  int i=0;
 
   //declare Mario
   Mario mario;
@@ -88,172 +70,216 @@ int endgame = 0;
   deque<NonMoving*> nonmoving;
   //create list of enemies
   deque<Enemy*> enemies;
-
-  //Create the level using the world1-1.txt file
-  ifstream world11;
-  world11.open("world1-1.txt");
-  if(!world11){ printf("The world 1-1 file didn't open"); }
-  int xcoord, ycoord;
   
-  //create the ground (remove the missing blocks in the next while loop)
-  for(int k = 1; k<=220; k++){
-    nonmoving.push_back(new Ground(k, 13));
-  }
-  int erasedBlocks = 0;
-  string blockType;
-  while(!world11.eof()){
-    world11 >> blockType;
-    world11 >> xcoord;
-    world11 >> ycoord;
-	if(blockType == "brick")
-		nonmoving.push_back(new Brick(xcoord, ycoord));
-	else if(blockType == "question")
-		nonmoving.push_back(new Question(xcoord, ycoord));
-	else if(blockType == "pipe")
-		nonmoving.push_back(new Pipe(xcoord, ycoord));
-	else if(blockType == "stair")
-		nonmoving.push_back(new Stair(xcoord, ycoord));
-	else if(blockType == "noGround"){//erase a ground block
-		nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
-		erasedBlocks++;
-	} else if(blockType == "goomba"){
-                enemies.push_back(new Goomba( xcoord*blockSize, ycoord*blockSize));
-		cout<<"New Goomba" << endl;
-        } else if(blockType == "koopa"){
-		enemies.push_back(new Koopa( xcoord*blockSize, ycoord*blockSize));
-		cout<<"New koopa" << endl;
-        }
-  }
+  //This bigger loop will allow for multiple lives
+  while(!gameover){
+     //Main loop flag
+     bool quit = false;
+     bool endgame = 0; //use this to detect if mario lost a life
 
-  //create the camera
-  SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+     //Event handler, only accepts the esc key to quit program
+     //all other events are processed by Mario's class
+     SDL_Event e;
+
+
+     //loop counter, to determine timing and such
+     int i=0;
+
+       //Display Intro screen with lives
+       //Rendering function
+       //Clear screen
+       SDL_SetRenderDrawColor( gRenderer, 0, 0, 0, 0xFF );
+       SDL_RenderClear( gRenderer );
+       SDL_RenderPresent( gRenderer );
+       //delays to set proper framerate
+       SDL_Delay(2000);
+     
+
+     //Create the level using the world1-1.txt file
+     ifstream world11;
+     world11.open("world1-1.txt");
+     if(!world11){ printf("The world 1-1 file didn't open"); }
+     int xcoord, ycoord;
+  
+     //create the ground (remove the missing blocks in the next while loop)
+     for(int k = 1; k<=220; k++){
+       nonmoving.push_back(new Ground(k, 13));
+     }
+     int erasedBlocks = 0;
+     string blockType;
+     while(!world11.eof()){
+       world11 >> blockType;
+       world11 >> xcoord;
+       world11 >> ycoord;
+	   if(blockType == "brick")
+	   	   nonmoving.push_back(new Brick(xcoord, ycoord));
+	   else if(blockType == "question")
+		   nonmoving.push_back(new Question(xcoord, ycoord));
+	   else if(blockType == "pipe")
+		   nonmoving.push_back(new Pipe(xcoord, ycoord));
+	   else if(blockType == "stair")
+		   nonmoving.push_back(new Stair(xcoord, ycoord));
+	   else if(blockType == "noGround"){//erase a ground block
+		   nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
+		   erasedBlocks++;
+	   } else if(blockType == "goomba"){
+                   enemies.push_back(new Goomba( xcoord*blockSize, ycoord*blockSize));
+		   cout<<"New Goomba" << endl;
+           } else if(blockType == "koopa"){
+		   enemies.push_back(new Koopa( xcoord*blockSize, ycoord*blockSize));
+		   cout<<"New koopa" << endl;
+           }
+     }
+
+     //create the camera
+     SDL_Rect camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 //==================================================================================================
-  //Start the game loop
-  while( !quit ){
-	//Handle events on queue (quit or no quit)
-	while( SDL_PollEvent( &e ) != 0) {
-		if(e.key.keysym.sym == SDLK_ESCAPE) { //User requests quit
-			quit = true;
-			break;
-		}
-	}
+     //Start the game loop
+     while( !quit ){
+	   //Handle events on queue (quit or no quit)
+	   while( SDL_PollEvent( &e ) != 0) {
+		   if(e.key.keysym.sym == SDLK_ESCAPE) { //User requests quit
+                           gameover = 1; //exit out of the game completely
+			   quit = true;
+			   break;
+		   }
+	   }
 
 //==================================================================================================
-  //handle Mario's input from the 
-  mario.handleInput(i);
+        //handle Mario's input from the 
+        mario.handleInput(i);
 
 //===============================================================================================
 
-//Rendering function
-  //Clear screen
-  SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
-  SDL_RenderClear( gRenderer );
+       //Rendering function
+       //Clear screen
+       SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
+       SDL_RenderClear( gRenderer );
 
-  /*if(mario.xposition() > (camera.x+ SCREEN_WIDTH/2)){
-     //camera.x = (mario.xposition() + (blockSize/2) )- SCREEN_WIDTH/2;
-     camera.x = ( (mario.xposition() + (blockSize/2)) - SCREEN_WIDTH/2)+ mario.xvelocity();
-  }*/
-  if(mario.xposition() > 0){
-     camera.x = (mario.xposition() + (blockSize/2)) - SCREEN_WIDTH/2;
-  }
+       if(mario.xposition() > (camera.x+ SCREEN_WIDTH/2)){
+           //camera.x = (mario.xposition() + (blockSize/2) )- SCREEN_WIDTH/2;
+           camera.x = ( (mario.xposition() + (blockSize/2)) - SCREEN_WIDTH/2)+ mario.xvelocity();
+       }
+       if(mario.xposition() > 0){
+          camera.x = (mario.xposition() + (blockSize/2)) - SCREEN_WIDTH/2;
+       }
 
-  //Keep the camera in bounds
-  if( camera.x < 0 )
-  { 
-    camera.x = 0;
-  }
-  if( camera.x > LEVEL_WIDTH - camera.w )
-  {
-    camera.x = LEVEL_WIDTH - camera.w;
-  }
+       //Keep the camera in bounds
+       if( camera.x < 0 )
+       { 
+         camera.x = 0;
+       }
+       if( camera.x > LEVEL_WIDTH - camera.w )
+       {
+         camera.x = LEVEL_WIDTH - camera.w;
+       }
   
-  mario.render();
-  for(int j=0; j<nonmoving.size(); j++){
-	nonmoving[j]->render(camera.x, camera.y);
-  }
-  for( int j = 0; j < enemies.size(); j++){
-      enemies[j]->render(camera.x, camera.y);
-  }
+       mario.render();
+       for(int j=0; j<nonmoving.size(); j++){
+	     nonmoving[j]->render(camera.x, camera.y);
+       }
+       for( int j = 0; j < enemies.size(); j++){
+            enemies[j]->render(camera.x, camera.y);
+       }
 
-  //Update screen
-  SDL_RenderPresent( gRenderer );
+       //Update screen
+       SDL_RenderPresent( gRenderer );
 //===============================================================================================
-  //Move Mario function 
-  //This next block updates Mario's position
-  i++;//increment the loopcount
-  mario.move(i,camera.x);
-  for( int j = 0; j < enemies.size(); j++){
-      enemies[j]->move(&camera);
-  }
+       //Move Mario function 
+       //This next block updates Mario's position
+       i++;//increment the loopcount
+       mario.move(i,camera.x);
+       for( int j = 0; j < enemies.size(); j++){
+           enemies[j]->move(&camera);
+       }
 
-  //Check for collisions
-  for(int j = 0; j < nonmoving.size(); j++){ //map collisions
-     mario.mapCollision(camera.x, nonmoving[j]->getPos());
-     for(int k = 0; k <enemies.size(); k++){
-        enemies[k]->mapCollision(camera.x, nonmoving[j]->getPos());
-     }
-  }
-  //enemy collisions including enemies bumpimng into enemies
-  //for(int j = 0; j <enemies.size(); j++){
-    // enemies[j]->marioCollision(camera.x,mario.getHitBox()); //tried to give mario a bost when he jumps off enemies
-  //}
-  for(int j = 0; j < enemies.size(); j++){
-     if(enemies[j]->getAlive()){
-        mario.enemyCollision(enemies[j]->getHitBox());//check if mario squashed an enemy
-     }
-     for(int k = 0; k <enemies.size(); k++){ //enemies can collide with each other
-        if(j != k) enemies[j]->mapCollision(camera.x, enemies[k]->getHitBox());//avoid checkin gif enemy collides with itself
-     }
-  } 
+       //Check for collisions
+       for(int j = 0; j < nonmoving.size(); j++){ //map collisions
+          mario.mapCollision(camera.x, nonmoving[j]->getPos());
+          for(int k = 0; k <enemies.size(); k++){
+             enemies[k]->mapCollision(camera.x, nonmoving[j]->getPos());
+          }
+       }
 
-  //check if mario is dead // this should be a function
-  if( !mario.getAlive()){
+       //enemy collisions including enemies bumpimng into enemies
+       /*for(int j = 0; j <enemies.size(); j++){
+          enemies[j]->marioCollision(camera.x,mario.getHitBox()); //tried to give mario a bost when he jumps off enemies
+       }*/
+       for(int j = 0; j < enemies.size(); j++){
+          if(enemies[j]->getAlive()){
+             mario.enemyCollision(enemies[j]->getHitBox());//check if mario squashed an enemy
+          }
+          for(int k = 0; k <enemies.size(); k++){ //enemies can collide with each other
+             if(j != k) enemies[j]->mapCollision(camera.x, enemies[k]->getHitBox());//avoid checkin gif enemy collides with itself
+          }
+       } 
+
+       //check if mario is dead // this should be a function
+       if( !mario.getAlive()){
 cout<<"mario should be dead"<<endl;
-     //this will be the death animation basically
-     int goingUp = 1;
-     double deathY = mario.yposition();
-     mario.setYvelocity(-1); //go up screen first
-     while(mario.yposition() < 520){ //until mario is below the screen
-        if(mario.yposition() > deathY-200 && goingUp){
-           mario.move(i, camera.x);
-        }
-        if(mario.yposition() <= deathY-50){
-           goingUp = 0;
-           mario.setYvelocity(1); //mario starts going down
-        }
-        if(!goingUp){
-          mario.move(i, camera.x);
-        }
-        //render mario and all current objects on the screen
-  SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
-  SDL_RenderClear( gRenderer );
-        for(int j=0; j<nonmoving.size(); j++){
-           nonmoving[j]->render(camera.x, camera.y);
-        }
-        for( int j = 0; j < enemies.size(); j++){
-           enemies[j]->render(camera.x, camera.y);
-        }
-        mario.render();
-        SDL_Delay(10);
+          //this will be the death animation basically
+          int goingUp = 1;
+          double deathY = mario.yposition();
+          mario.setYvelocity(-1); //go up screen first
+          while(mario.yposition() < 520){ //until mario is below the screen
+             if(mario.yposition() > deathY-200 && goingUp){
+                mario.move(i, camera.x);
+             }
+             if(mario.yposition() <= deathY-50){
+                goingUp = 0;
+                mario.setYvelocity(1); //mario starts going down
+             }
+             if(!goingUp){
+               mario.move(i, camera.x);
+             }
+             //render mario and all current objects on the screen
+             SDL_SetRenderDrawColor( gRenderer, 100, 180, 255, 0xFF );
+             SDL_RenderClear( gRenderer );
+             for(int j=0; j<nonmoving.size(); j++){
+                nonmoving[j]->render(camera.x, camera.y);
+             }
+             for( int j = 0; j < enemies.size(); j++){
+                enemies[j]->render(camera.x, camera.y);
+             }
+             mario.render();
+             SDL_Delay(10);
         
-  SDL_RenderPresent( gRenderer );
-     }
-     endgame = 1;
-  }
-  if(endgame == 1) break;
-  //Check if any enemies have died, if so remove them from gameplay
-  deque<Enemy*>::iterator enemyIt; //note this is a pointer to a pointer
-  for(enemyIt = enemies.begin(); enemyIt != enemies.end(); enemyIt++){\
-     if( (*enemyIt)->getDeathCount() >= 25 ){
-        enemies.erase(enemyIt);
-     }  
-  }
+             SDL_RenderPresent( gRenderer );
+          }
+          endgame = 1;
+       }
+       if(mario.yposition() >= 600){
+          SDL_Delay(500); //just time to realize you fell
+          endgame = 1;
+       }
 
-  if(i>100) nonmoving[4]->collision();
-  //delays to set proper framerate
-  SDL_Delay(10);
-  }
+       if(endgame == 1){
+          //prepare to initialize again
+         mario.initialize();
+         nonmoving.clear();
+         enemies.clear();
+         world11.close();
+         if(mario.getLifeCount() <= 0){
+            gameover = 1;
+         }
+         //e = SDL;
+         break;
+       }
+
+       //Check if any enemies have died, if so remove them from gameplay
+       deque<Enemy*>::iterator enemyIt; //note this is a pointer to a pointer
+       for(enemyIt = enemies.begin(); enemyIt != enemies.end(); enemyIt++){\
+          if( (*enemyIt)->getDeathCount() >= 25 ){
+             enemies.erase(enemyIt);
+          }  
+       }
+
+       if(i>100) nonmoving[4]->collision();
+       //delays to set proper framerate
+       SDL_Delay(10);
+    } //single life loop
+  } //multiplife loop
 
 //Free resources and close SDL
 close();

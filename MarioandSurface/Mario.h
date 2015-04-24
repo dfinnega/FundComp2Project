@@ -22,6 +22,8 @@ class Mario {
 
     void setYVel(double);
     bool getAlive();
+    int getLifeCount(); //return # of lives mario has
+    void initialize(); //set all stats back to constructor stats
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier
     enum{left, right};		//enums to make direction easier
@@ -57,6 +59,7 @@ class Mario {
     int sprite();		//determines which sprite to render
 
     bool alive; //is mario alive or not
+    int lifeCount; //keep track of number of lives mario has
 
     //The following values are static and const, and are the same for every Mario
     //They are declared in Mario.cpp, and the values are obtained from the physics sheet

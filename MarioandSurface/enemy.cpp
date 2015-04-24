@@ -102,8 +102,8 @@ int Enemy::topCollision(int cameraX, SDL_Rect mario){
       int above = 0, below = 0, right = 0, left = 0;
       if(enemyTop > Mbottom) below = 1; //enemy is below mario
       if(enemyBottom < Mtop) above = 1; //enemy is above mario
-      if(enemyLeft > Mright) right = 1; //enemy is right of mario
-      if(enemyRight < Mleft) left = 1; //enemy is left of mario
+      if(enemyLeft >= Mright) right = 1; //enemy is right of mario
+      if(enemyRight <= Mleft) left = 1; //enemy is left of mario
       if( above || below || left || right){
          return 0; //There is no collision
       }

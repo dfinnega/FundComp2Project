@@ -80,7 +80,7 @@ void  Koopa::decideFrame(){
       }
    }
    }else{
-      deathCount++;
+      //deathCount++;
       if( hitCount < 2){
       frame = (6*frameDelay)-1; //this should display the 6th sprite, the shell
       }
@@ -99,10 +99,10 @@ double Koopa::marioCollision(int cameraX, SDL_Rect mario){
             mPosX -=mVelX;
             if(hitCount < 2){
                mVelX = 0; //shell stops in place
+               hitBox.h-=10; //make lil shell appear on the ground
             }else if(hitCount == 2){
-               mVelX = 10; //shell zooms fast across screen
+               mVelX = 7; //shell zooms fast across screen
             }
-            hitBox.h-=10; //make little shell appear on ground
             return -10; //make mario bounce up a bit
          }
        }
