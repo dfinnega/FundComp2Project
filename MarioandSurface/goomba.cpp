@@ -70,11 +70,12 @@ void Goomba::decideFrame(){
 
 }
 
-double Goomba::marioCollision(int cameraX, SDL_Rect  mario){
+double Goomba::marioCollision(int cameraX, SDL_Rect  mario, double Myvelocity){
 
    if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
       if(alive){
-         if(topCollision(cameraX, mario)){
+         if(topCollision(cameraX, mario, Myvelocity)){
+cout<<"mario killed enemy"<<endl;
             alive = 0;
             mPosX-=mVelX;
             mVelX = 0;

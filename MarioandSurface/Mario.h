@@ -14,6 +14,7 @@ class Mario {
     double xposition();
     double xvelocity();
     double yposition();
+    double yvelocity();
     void setYvelocity(double);
     int mapCollision(int, SDL_Rect);
     void enemyCollision(SDL_Rect); //see if mario dies!

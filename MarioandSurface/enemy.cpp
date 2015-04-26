@@ -82,9 +82,9 @@ int Enemy::getDeathCount(){
    return deathCount;
 }
 
-int Enemy::topCollision(int cameraX, SDL_Rect mario){
+int Enemy::topCollision(int cameraX, SDL_Rect mario, double MvelY){
 
-   if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
+   if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){ //if enemy is on screen
 
       //for readability
       //enemy coordinates
@@ -102,8 +102,8 @@ int Enemy::topCollision(int cameraX, SDL_Rect mario){
       int above = 0, below = 0, right = 0, left = 0;
       if(enemyTop > Mbottom) below = 1; //enemy is below mario
       if(enemyBottom < Mtop) above = 1; //enemy is above mario
-      if(enemyLeft >= Mright) right = 1; //enemy is right of mario
-      if(enemyRight <= Mleft) left = 1; //enemy is left of mario
+      if(enemyLeft > Mright) right = 1; //enemy is right of mario
+      if(enemyRight < Mleft) left = 1; //enemy is left of mario
       if( above || below || left || right){
          return 0; //There is no collision
       }
@@ -111,12 +111,14 @@ int Enemy::topCollision(int cameraX, SDL_Rect mario){
       //Check if mario is on top of enemy
       //aka if enemy has bottom collision with
       //mario
-      if(enemyTop <= Mbottom && enemyBottom > Mbottom){
-         if(!left && !right){
+      if(enemyTop <= Mbottom && enemyBottom > Mbottom && MvelY > 0){
+         if( (Mright >= enemyLeft && Mleft <= enemyLeft) || (Mleft <= enemyRight && Mright >= enemyRight) ){
+cout<<enemyTop<<" "<<Mbottom<<" "<<enemyBottom<<endl;
             return 1;
          }
       }
    }
+   return 0;
 }
 int Enemy::getAlive(){
    return alive;

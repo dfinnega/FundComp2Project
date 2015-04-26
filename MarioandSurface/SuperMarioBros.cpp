@@ -124,10 +124,8 @@ bool gameover = 0; //use to detec if mario lost three lives and the game is over
 		   erasedBlocks++;
 	   } else if(blockType == "goomba"){
                    enemies.push_back(new Goomba( xcoord*blockSize, ycoord*blockSize));
-		   cout<<"New Goomba" << endl;
            } else if(blockType == "koopa"){
 		   enemies.push_back(new Koopa( xcoord*blockSize, ycoord*blockSize));
-		   cout<<"New koopa" << endl;
            }
      }
 
@@ -203,12 +201,12 @@ bool gameover = 0; //use to detec if mario lost three lives and the game is over
        }
 
        //enemy collisions including enemies bumpimng into enemies
-       /*for(int j = 0; j <enemies.size(); j++){
-          enemies[j]->marioCollision(camera.x,mario.getHitBox()); //tried to give mario a bost when he jumps off enemies
-       }*/
+       for(int j = 0; j <enemies.size(); j++){// see if mario squashed an enemy
+          enemies[j]->marioCollision(camera.x,mario.getHitBox(), mario.yvelocity()); //tried to give mario a bost when he jumps off enemies
+       }
        for(int j = 0; j < enemies.size(); j++){
           if(enemies[j]->getAlive()){
-             mario.enemyCollision(enemies[j]->getHitBox());//check if mario squashed an enemy
+             mario.enemyCollision(enemies[j]->getHitBox());//check if mario got killed by an enemy
           }
           for(int k = 0; k <enemies.size(); k++){ //enemies can collide with each other
              if(j != k) enemies[j]->mapCollision(camera.x, enemies[k]->getHitBox());//avoid checkin gif enemy collides with itself

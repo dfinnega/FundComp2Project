@@ -444,26 +444,33 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
 }
 //==============================================================================================
 void Mario::enemyCollision(SDL_Rect object){
+  int Mtop = ypos;			//Mario's top
+  int Mbottom = ypos + blockSize;	//Mario's bottom
+  int Mleft = xpos;			//Mario's left
+  int Mright = xpos + blockSize;	//Mario's right
+  //object's coordinates (easier to work with)
+  int enemyTop = object.y;			//Object's top
+  int enemyBottom = object.y + object.h;	//Object's bottom
+  int enemyLeft = object.x;			//Object's left
+  int enemyRight = object.x + object.w;	//Object's right
   
-   //collide into right
-   if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ){
-      if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ){
-         //cout<<"You collided from the right"<<endl;
-         cout<<"MArio hit an enemy and he should die"<<endl;
-         alive= 0;
-         lifeCount--;
-      }
-   }
 
-   //collide into left
-   if(  ((xpos) <= (object.x+object.w)) && ( (xpos+blockSize) > (object.x+object.w) ) ) {
-      if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ) {
-         //cout<<"You collided from the right"<<endl;
-         cout<<"Mario hit an enemy and he should die!"<<endl;
-         alive = 0;
-         lifeCount--;
-      }
-   }
+  //collide into right
+  if(Mright >= enemyLeft && Mleft < enemyLeft){
+     if( (Mbottom >= enemyTop && Mtop <= enemyTop) || (Mtop <= enemyBottom && Mbottom >= enemyBottom ) ){
+        alive = 0;
+        lifeCount--;
+     }
+  }
+
+  //collide into left
+  if(Mleft <= enemyRight && Mright > enemyRight ){
+     if( (Mbottom >= enemyTop && Mtop <= enemyTop) || (Mtop <= enemyBottom && Mbottom >= enemyBottom) ){
+        alive = 0;
+        lifeCount--;
+     }
+  }
+
 }
 //==============================================================================================
 double Mario::xposition(){
@@ -475,6 +482,10 @@ double Mario::xvelocity(){
 
 double Mario::yposition(){
    return ypos;
+}
+
+double Mario::yvelocity(){
+   return yvel;
 }
 
 void Mario::setYvelocity(double newYvel){
