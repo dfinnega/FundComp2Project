@@ -67,10 +67,10 @@ Mario::Mario(){
   spriteLocation.w = blockSize;
   spriteLocation.h = blockSize;
 
-  hitBox.x = 50;
-  hitBox.y = 200;
-  hitBox.w = blockSize-5;
-  hitBox.h = blockSize-5;
+  hitBox.x = 55;
+  hitBox.y = 205;
+  hitBox.w = blockSize-10;
+  hitBox.h = blockSize-10;
   
   //initialize movement values
   running = 0;
@@ -129,7 +129,7 @@ void Mario::move(int i, int camerax){
 
   //update hitbox
   hitBox.x = xpos+5;//tyr to make hitbox match sprite size
-  hitBox.y = ypos;
+  hitBox.y = ypos+5;
 
   //this next line prints Mario's current values
   //printf("yvel: %f xvel: %f spriteLocation.y: %i spriteLocation.x:%i running:%i onGround:%i\n",yvel,xvel,spriteLocation.y,spriteLocation.x,running,onGround);
@@ -439,8 +439,8 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
    }
 
    //update hitbox
-   hitBox.x = xpos;
-   hitBox.y = ypos;
+   hitBox.x = xpos + 5;
+   hitBox.y = ypos + 5;
 }
 //==============================================================================================
 void Mario::enemyCollision(SDL_Rect object){
@@ -519,8 +519,8 @@ void Mario::initialize(){
 
   hitBox.x = 50;
   hitBox.y = 200;
-  hitBox.w = blockSize-5;
-  hitBox.h = blockSize-5;
+  hitBox.w = blockSize-10;
+  hitBox.h = blockSize-10;
 
   //initialize movement values
   running = 0;
