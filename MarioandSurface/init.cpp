@@ -78,6 +78,11 @@ bool loadMedia()
                 printf( "Failed to load texture image!\n" );
                 success = false;
         }
+        itemSheet = loadTexture("items.bmp");
+        if(itemSheet == NULL){
+           printf("Failed to load texture image!\n");
+           success = false;
+        }
         
         return success;
 }
@@ -90,6 +95,8 @@ void close()
         marioSheet = NULL;
         SDL_DestroyTexture( blockSheet );
         blockSheet = NULL;
+        SDL_DestroyTexture(itemSheet);
+        itemSheet = NULL;
 
         //Destroy window        
         SDL_DestroyRenderer( gRenderer );

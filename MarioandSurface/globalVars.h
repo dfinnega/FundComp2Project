@@ -18,3 +18,4 @@ extern SDL_Renderer* gRenderer;
 //Current displayed texture
 extern SDL_Texture* marioSheet;
 extern SDL_Texture* blockSheet;
+extern SDL_Texture* itemSheet;

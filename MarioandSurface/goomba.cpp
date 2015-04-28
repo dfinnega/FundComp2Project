@@ -35,7 +35,7 @@ void Goomba::move(SDL_Rect* camera){
       mPosX += mVelX;
 
    //if object reaches the end of the screen then bounce back
-      if( (mPosX + ENEMY_WIDTH > LEVEL_WIDTH) || (mPosX < 0) ){
+      if( (mPosX + blockSize > LEVEL_WIDTH) || (mPosX < 0) ){
          mVelX*=(-1);
       }
       

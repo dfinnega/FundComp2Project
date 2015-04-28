@@ -18,7 +18,7 @@ and may not be redistributed without written permission.*/
 #include "enemy.h"
 #include "goomba.h"
 #include "koopa.h"
-//#include "piranha.h"
+#include "mushroom.h"
 #include <stdio.h>
 #include <iostream>
 #include <string>
@@ -42,12 +42,13 @@ SDL_Renderer* gRenderer = NULL;
 //Declare new textures 
 SDL_Texture* marioSheet = NULL; 
 SDL_Texture* blockSheet = NULL; 
-
+SDL_Texture* itemSheet = NULL;
 //=========================================================================
 //Begin main program
 int main( int argc, char* args[] )
 {
-bool gameover = 0; //use to detec if mario lost three lives and the game is over
+   bool gameover = 0; //use to detec if mario lost three lives and the game is over
+
   //Start up SDL and create window
   if( !init() ) {
 	printf( "Failed to initialize!\n" );
@@ -58,13 +59,10 @@ bool gameover = 0; //use to detec if mario lost three lives and the game is over
 	printf( "Failed to load media!\n" );
 	return 2;
   }
-  /*if( !shroom.loadTexture("smb_enemies_sheet.bmp") ){
-     printf( "Failed to laod media!\n");
-     return 2;
-  }*/
 
   //declare Mario
   Mario mario;
+  Mushroom shroom(21*blockSize, 8*blockSize); //initalize shroom
 
   //create list of nonmoving elements
   deque<NonMoving*> nonmoving;
@@ -180,7 +178,7 @@ bool gameover = 0; //use to detec if mario lost three lives and the game is over
        for( int j = 0; j < enemies.size(); j++){
             enemies[j]->render(camera.x, camera.y);
        }
-
+       shroom.render(camera.x, camera.y);
        //Update screen
        SDL_RenderPresent( gRenderer );
 //===============================================================================================
@@ -191,10 +189,12 @@ bool gameover = 0; //use to detec if mario lost three lives and the game is over
        for( int j = 0; j < enemies.size(); j++){
            enemies[j]->move(&camera);
        }
-
+       shroom.move(&camera);
        //Check for collisions
+       shroom.marioCollision(camera.x,mario.getHitBox());
        for(int j = 0; j < nonmoving.size(); j++){ //map collisions
           mario.mapCollision(camera.x, nonmoving[j]->getPos());
+          shroom.mapCollision(camera.x, nonmoving[j]->getPos());
           for(int k = 0; k <enemies.size(); k++){
              enemies[k]->mapCollision(camera.x, nonmoving[j]->getPos());
           }
@@ -215,7 +215,6 @@ bool gameover = 0; //use to detec if mario lost three lives and the game is over
 
        //check if mario is dead // this should be a function
        if( !mario.getAlive()){
-cout<<"mario should be dead"<<endl;
           //this will be the death animation basically
           int goingUp = 1;
           double deathY = mario.yposition();
@@ -249,6 +248,7 @@ cout<<"mario should be dead"<<endl;
        }
        if(mario.yposition() >= 600){
           SDL_Delay(500); //just time to realize you fell
+          mario.lostLife();
           endgame = 1;
        }
 

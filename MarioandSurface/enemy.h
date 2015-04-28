@@ -9,7 +9,6 @@
 #include <string>
 #include "globalVars.h"
 #include "Ltexture.h"
-#include <SDL2/SDL.h>
 using namespace std;
 
 //extern const int LEVEL_WIDTH;
@@ -19,11 +18,6 @@ using namespace std;
 
 class Enemy{
    public:
-        //the dimensions of the enemy
-        static const int ENEMY_WIDTH = 40;
-        static const int ENEMY_HEIGHT = 40;
-   //Maximum axis velocity of the dot
-        static const int DOT_VEL = 10;
         //Initializes the variables
         Enemy( int, int);
         //moves the enemy

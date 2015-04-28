@@ -24,6 +24,7 @@ class Mario {
     void setYVel(double);
     bool getAlive();
     int getLifeCount(); //return # of lives mario has
+    void lostLife();
     void initialize(); //set all stats back to constructor stats
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier

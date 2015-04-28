@@ -46,7 +46,7 @@ void Koopa::move(SDL_Rect *camera){
 
       //if object reaches the end of the screen then change direction
       //this set up will be used for object collision
-      if( (mPosX + ENEMY_WIDTH > LEVEL_WIDTH) || (mPosX < 0) ){
+      if( (mPosX + blockSize > LEVEL_WIDTH) || (mPosX < 0) ){
          mVelX *=(-1);
       }
 

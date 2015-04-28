@@ -113,7 +113,6 @@ int Enemy::topCollision(int cameraX, SDL_Rect mario, double MvelY){
       //mario
       if(enemyTop <= Mbottom && enemyBottom > Mbottom && MvelY > 0){
          if( (Mright >= enemyLeft && Mleft <= enemyLeft) || (Mleft <= enemyRight && Mright >= enemyRight) ){
-cout<<enemyTop<<" "<<Mbottom<<" "<<enemyBottom<<endl;
             return 1;
          }
       }

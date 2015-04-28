@@ -399,25 +399,7 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
 	mapCollide[bottomCollision] = 1;
     }
   }
-/*  
-  //Mario's right collision
-  if( Mright >= Oleft && Mleft < Oleft && !mapCollide[rightCollision]){
-    if( !above && !below ){
-        xpos = Oleft - blockSize;
-        xvel = 0;
-        mapCollide[rightCollision] = 1;
-    }
-  }
 
-  //Mario's left collision
-  if( Mleft <= Oright && Mright < Oright && !mapCollide[leftCollision]){
-    if( !above && !below ){
-        xpos = Oright;
-        xvel = 0;
-        mapCollide[leftCollision] = 1;
-    }
-  }
-*/ 
    //collide into right
    if(  ((xpos+blockSize) >= object.x) && (xpos < object.x) ){
       if(  ((ypos > object.y) || ( (ypos+blockSize) > (object.y) ) ) && ( (ypos < (object.y + object.h)) || ( (ypos+blockSize) < (object.y + object.h) ) )   ){
@@ -506,6 +488,10 @@ bool Mario::getAlive(){
 
 int Mario::getLifeCount(){
    return lifeCount;
+}
+
+void Mario::lostLife(){
+   lifeCount--;
 }
 
 void Mario::initialize(){

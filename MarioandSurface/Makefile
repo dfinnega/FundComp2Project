@@ -2,8 +2,8 @@ FILE=SuperMarioBros
 
 all: $(FILE)
 
-$(FILE): $(FILE).o init.o Mario.o NonMoving.o Brick.o Pipe.o Question.o Ground.o Stair.o Ltexture.o enemy.o goomba.o koopa.o
-	g++ $(FILE).o init.o Mario.o NonMoving.o Brick.o Pipe.o Question.o Ground.o Stair.o Ltexture.o enemy.o goomba.o koopa.o -lSDL2 -o $(FILE)
+$(FILE): $(FILE).o init.o Mario.o NonMoving.o Brick.o Pipe.o Question.o Ground.o Stair.o Ltexture.o enemy.o goomba.o koopa.o mushroom.o
+	g++ $(FILE).o init.o Mario.o NonMoving.o Brick.o Pipe.o Question.o Ground.o Stair.o Ltexture.o enemy.o goomba.o koopa.o mushroom.o -lSDL2 -o $(FILE)
 
 $(FILE).o: $(FILE).cpp
 	g++ $(FILE).cpp -lSDL2 -c
@@ -42,6 +42,9 @@ goomba.o: goomba.cpp
 
 koopa.o: koopa.cpp
 	g++ koopa.cpp -lSDL2 -c
+
+mushroom.o: mushroom.cpp
+	g++ mushroom.cpp -lSDL2 -c
 
 PHONY: clean
 clean:
