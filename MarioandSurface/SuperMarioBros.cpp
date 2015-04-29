@@ -175,13 +175,13 @@ int main( int argc, char* args[] )
        }
   
        mario.render();
+       shroom.render(camera.x, camera.y);
        for(int j=0; j<nonmoving.size(); j++){
 	     nonmoving[j]->render(camera.x, camera.y);
        }
        for( int j = 0; j < enemies.size(); j++){
             enemies[j]->render(camera.x, camera.y);
        }
-       shroom.render(camera.x, camera.y);
        //Update screen
        SDL_RenderPresent( gRenderer );
 //===============================================================================================
@@ -194,7 +194,9 @@ int main( int argc, char* args[] )
        }
        shroom.move(&camera);
        //Check for collisions
-       shroom.marioCollision(camera.x,mario.getHitBox());
+       if(shroom.marioCollision(camera.x,mario.getHitBox())){
+		mario.getBig();
+       }
        for(int j = 0; j < nonmoving.size(); j++){ //map collisions
           if(mario.mapCollision(camera.x, nonmoving[j]->getPos())==2){
 		nonmoving[j]->collision();
@@ -276,17 +278,7 @@ int main( int argc, char* args[] )
          //e = SDL;
          break;
        }
-/*
-       //Check if any enemies have died, if so remove them from gameplay
-       deque<Enemy*>::iterator enemyIt; //note this is a pointer to a pointer
-       for(enemyIt = enemies.begin(); enemyIt != enemies.end(); enemyIt++){\
-          if( (*enemyIt)->getDeathCount() >= 25 ){
-		cout << "Deleting enemy" << endl;
-		*enemyIt = NULL;
-       	      	enemies.erase(enemyIt);
-          }  
-       }
-*/
+
        //delays to set proper framerate
        if(mario.xposition()>100*blockSize) SDL_Delay(6);
 	else SDL_Delay(10);	

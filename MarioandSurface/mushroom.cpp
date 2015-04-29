@@ -139,5 +139,7 @@ int Mushroom::marioCollision(int cameraX, SDL_Rect mario){
 
    if(collisionFlag == 1 && active) {
          active = 0;
+   	 return collisionFlag;
    }
+   return 0;
 }

@@ -29,4 +29,6 @@ void Flag::render(int camX, int camY){
   }
 }
 
-void Flag::collision(){}
+void Flag::collision(){
+  
+}
