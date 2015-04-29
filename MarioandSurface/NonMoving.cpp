@@ -18,10 +18,12 @@ NonMoving::NonMoving(int xgrid, int ygrid){
 }
 
 void NonMoving::render(int camX, int camY){
-  renderPosition.x = position.x - camX;
-  renderPosition.y = position.y - camY;
+  if(position.x >= camX-2*blockSize && position.x <= camX+SCREEN_WIDTH){
+    renderPosition.x = position.x - camX;
+    renderPosition.y = position.y - camY;
 
-  SDL_RenderCopyEx( gRenderer, blockSheet, &sprite, &renderPosition, 0, NULL, SDL_FLIP_NONE );
+    SDL_RenderCopyEx( gRenderer, blockSheet, &sprite, &renderPosition, 0, NULL, SDL_FLIP_NONE );
+  }  
 }
 
 SDL_Rect NonMoving::getPos(){

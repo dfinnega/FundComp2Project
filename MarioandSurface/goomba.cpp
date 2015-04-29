@@ -84,4 +84,5 @@ cout<<"mario killed enemy"<<endl;
          }
       }
    }
+   return 0;
 }
