@@ -198,6 +198,11 @@ int main( int argc, char* args[] )
        for(int j = 0; j < nonmoving.size(); j++){ //map collisions
           if(mario.mapCollision(camera.x, nonmoving[j]->getPos())==2){
 		nonmoving[j]->collision();
+                if(shroom.getPosX() == nonmoving[j]->getPos().x ){
+                   if(shroom.getPosY() == nonmoving[j]->getPos().y){
+                      shroom.setActive();
+                   }
+                }
 	  }
           shroom.mapCollision(camera.x, nonmoving[j]->getPos());
           for(int k = 0; k <enemies.size(); k++){

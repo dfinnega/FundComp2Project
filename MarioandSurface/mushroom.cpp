@@ -116,6 +116,11 @@ bool Mushroom::isActive(){
    return active;
 }
 
+void Mushroom::setActive(){
+   active = 1;
+   goinUp = 1; //for the mushroom to move
+}
+
 void Mushroom::initSprite(){
    for(int i = 0; i <1; i++){
       objectSpriteClips[i].x = 100;
@@ -132,14 +137,7 @@ int Mushroom::marioCollision(int cameraX, SDL_Rect mario){
    if(hitBox.x+hitBox.w <= mario.x) collisionFlag = 0;
    if(hitBox.x >= mario.x+mario.w) collisionFlag = 0;
 
-   if(collisionFlag == 1) {
-      hitCount++;
-      if(hitCount == 1){
-         cout<<"hit by mario"<<endl;
-         active = 1;
-         goinUp = 1;
-      } else{
+   if(collisionFlag == 1 && active) {
          active = 0;
-      }
    }
 }
