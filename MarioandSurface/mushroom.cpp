@@ -47,28 +47,24 @@ Mushroom::Mushroom( int startX, int startY){
 void Mushroom::move(SDL_Rect* camera){
    if(mPosX >= camera->x && mPosX <= camera->x+SCREEN_WIDTH && active){
       if(mPosY >= initY-blockSize && goinUp){
-        mVelY = -3; //rise out of
+        mVelY = -2; //rise out of keep as two so next statement works
+        mVelX = 0;
         if(mPosY == initY-blockSize) {
            goinUp = 0;
+           mVelX = 3;
         }
       }
-
-      /*if(goinUp){
-         mVelX = 0;
-      }else{
-         mVelX = 3;
-      }*/
-
-      mPosX += mVelX;
-      mPosY += mVelY;
+      mPosX+=mVelX;
+      mPosY+=mVelY;
    }
+
+
    hitBox.x = mPosX;
    hitBox.y = mPosY+5;//idk why I need the 5 here but I do
    spriteLocation.y = mPosY+5;
    spriteLocation.x = mPosX-camera->x;
 
    mVelY = 8; //assume mushroom is always falling
-   mVelX = 3;
 }
 
 void Mushroom::mapCollision(int camerax, SDL_Rect object){
