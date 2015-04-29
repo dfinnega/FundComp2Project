@@ -31,6 +31,7 @@ class Mushroom{
 
 
       bool isActive();
+      void setActive();
 
    private:
       int mPosX, mPosY, initY;
