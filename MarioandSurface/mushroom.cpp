@@ -29,7 +29,7 @@ Mushroom::Mushroom( int startX, int startY){
    spriteLocation.h = blockSize;
 
    //velocities
-   mVelX = 0;
+   mVelX = 3;
    mVelY = 0;
 
    active = 0;
@@ -48,46 +48,52 @@ void Mushroom::move(SDL_Rect* camera){
    if(mPosX >= camera->x && mPosX <= camera->x+SCREEN_WIDTH && active){
       if(mPosY >= initY-blockSize && goinUp){
         mVelY = -3; //rise out of
-         mVelX = 0;
-         if(mPosY == initY-blockSize) goinUp = 0;
+        if(mPosY == initY-blockSize) {
+           goinUp = 0;
+        }
       }
+
+      /*if(goinUp){
+         mVelX = 0;
+      }else{
+         mVelX = 3;
+      }*/
+
       mPosX += mVelX;
       mPosY += mVelY;
    }
-   hitBox.x = mPosX+5;
-   hitBox.y = mPosY;
-   spriteLocation.y = mPosY;
+   hitBox.x = mPosX;
+   hitBox.y = mPosY+5;//idk why I need the 5 here but I do
+   spriteLocation.y = mPosY+5;
    spriteLocation.x = mPosX-camera->x;
 
-   mVelY = 1; //assume mushroom is always falling
+   mVelY = 8; //assume mushroom is always falling
    mVelX = 3;
 }
 
 void Mushroom::mapCollision(int camerax, SDL_Rect object){
-   int shroomRight = hitBox.x;
-   int shroomLeft = hitBox.x+hitBox.w;
-   int shroomTop = hitBox.y;
-   int shroomBottom = hitBox.y+hitBox.h;
-   //object sides
-   int Oright = object.x;
-   int Oleft = object.x+object.w;
-   int Otop = object.y;
-   int Obottom = object.y+object.h;
-
-   //check left and right collisions
-   if( (shroomRight >= Oleft && shroomLeft < Oleft ) || (shroomLeft <= Oright && shroomRight > Oright)){
-      if( (shroomBottom >= Otop && shroomTop < Otop) || (shroomTop <= Obottom &&shroomBottom > Obottom) ){
-         mPosX-=mVelX;
-         mVelX*=(-1);
+   if(active){
+      int shroomRight = hitBox.x+hitBox.w;
+      int shroomLeft = hitBox.x;
+      int shroomTop = hitBox.y;
+      int shroomBottom = hitBox.y+hitBox.h;
+      //object sides
+      int Oright = object.x;
+      int Oleft = object.x+object.w;
+      int Otop = object.y;
+      int Obottom = object.y+object.h;
+      //check left and right collisions
+      if( ( (mPosX+hitBox.w >= object.x) && (mPosX < object.x) ) || ( (mPosX <= object.x+object.w)  &&  (mPosX+hitBox.w > object.x+object.w) ) ){
+         if(  ((mPosY+hitBox.h > object.y) || ( (mPosY) > (object.y) ) ) && ( (mPosY+hitBox.h < (object.y + object.h)) || ( (mPosY) < (object.y + object.h) ) )   ) {
+          mPosX -=mVelX;
+          mVelX*=(-1);
+         }
       }
-    }
-
-   //check if collide with ground
-   if(shroomBottom >= Otop && shroomTop <= Otop){
-//cout<<"got a top collision"<<endl;
-      if( (shroomRight >= Oleft && shroomLeft <= Oleft) || (shroomLeft <= Oright && shroomRight >= Oright) ){
-cout<<"got  real a top collision"<<endl;
-         mVelY = 0;
+    //check if collide with ground
+      if(shroomBottom >= Otop && shroomTop < Otop){
+         if( (shroomRight >= Oleft && shroomLeft <= Oleft) || (shroomLeft <= Oright && shroomRight >= Oright) ){
+            mVelY = 0;
+         }
       }
    }
 }
