@@ -123,13 +123,13 @@ Mario::Mario(){
   framesPast = 0;
   alreadyJumped = 0;
   onGround = 1;
+  invincible = 0;
   for(int i=0; i<4; i++)
 	mapCollide[i]=0;
  
   spriteOffset = 0;//start off small
 
   //mario start off alive
-  //getBig();
   alive = 1;
   lifeCount = 3; //mario starts off with three lives
 }
@@ -139,6 +139,12 @@ void Mario::move(int i, int camerax){
   if(alive){
      //This next block updates Mario's position
      i++;
+     //This is to set invincibility status
+     if(invincible >0 && invincible <25){
+	invincible++;
+     } else {
+	invincible = 0;
+     }
      //reset the collision status
      for(int iter=0; iter<4; iter++)
        mapCollide[iter]=0;  
@@ -492,7 +498,8 @@ void Mario::enemyCollision(SDL_Rect object){
      if( (Mbottom >= enemyTop && Mtop <= enemyTop) || (Mtop <= enemyBottom && Mbottom >= enemyBottom ) ){
         if(big){
 		getSmall();
-	} else {
+		invincible = 1;
+	} else if(!invincible){
 		alive = 0;
         	lifeCount--;
 	}
@@ -504,7 +511,8 @@ void Mario::enemyCollision(SDL_Rect object){
      if( (Mbottom >= enemyTop && Mtop <= enemyTop) || (Mtop <= enemyBottom && Mbottom >= enemyBottom) ){
         if(big){
 		getSmall();
-	} else {
+		invincible = 1;
+	} else if(!invincible){
 		alive = 0;
         	lifeCount--;
 	}

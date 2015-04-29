@@ -51,6 +51,7 @@ class Mario {
 
     //This is used to make sure Mario only jumps once
     int alreadyJumped;
+    int invincible;
     
     int onGround;		//1 if on the ground, 0 otherwise
     int runningSprite;		//alternates between 0, 1, and 2, and makes the Mario running animation
