@@ -152,6 +152,7 @@ stair           191     8
 stair           191     7
 stair           191     6
 stair           191     5
+flag		200	0
 stair		200	12
 noGround	88	13
 noGround	89	13

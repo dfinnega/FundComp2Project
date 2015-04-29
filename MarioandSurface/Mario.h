@@ -28,6 +28,7 @@ class Mario {
     void initialize(); //set all stats back to constructor stats
     void getBig();
     void getSmall();
+    void bounceOffEnemy();
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier
     enum{left, right};		//enums to make direction easier

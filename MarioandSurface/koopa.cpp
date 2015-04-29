@@ -103,8 +103,9 @@ int Koopa::marioCollision(int cameraX, SDL_Rect mario, double Myvelocity){
             }else if(hitCount == 2){
                mVelX = 7; //shell zooms fast across screen
             }
-            return -10; //make mario bounce up a bit
+            return 1; //make mario bounce up a bit
          }
        }
    }
+   return 0;
 }

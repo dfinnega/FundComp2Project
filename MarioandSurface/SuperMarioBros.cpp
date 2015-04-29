@@ -13,6 +13,7 @@ and may not be redistributed without written permission.*/
 #include "Question.h"
 #include "Ground.h"
 #include "Stair.h"
+#include "Flag.h"
 #include "globalVars.h"
 #include "Ltexture.h"
 #include "enemy.h"
@@ -117,6 +118,8 @@ int main( int argc, char* args[] )
 		   nonmoving.push_back(new Pipe(xcoord, ycoord));
 	   else if(blockType == "stair")
 		   nonmoving.push_back(new Stair(xcoord, ycoord));
+	   else if(blockType == "flag")
+		   nonmoving.push_back(new Flag(xcoord, ycoord));
 	   else if(blockType == "noGround"){//erase a ground block
 		   nonmoving.erase(nonmoving.begin() + xcoord - erasedBlocks);
 		   erasedBlocks++;
@@ -193,7 +196,9 @@ int main( int argc, char* args[] )
        //Check for collisions
        shroom.marioCollision(camera.x,mario.getHitBox());
        for(int j = 0; j < nonmoving.size(); j++){ //map collisions
-          mario.mapCollision(camera.x, nonmoving[j]->getPos());
+          if(mario.mapCollision(camera.x, nonmoving[j]->getPos())==2){
+		nonmoving[j]->collision();
+	  }
           shroom.mapCollision(camera.x, nonmoving[j]->getPos());
           for(int k = 0; k <enemies.size(); k++){
              enemies[k]->mapCollision(camera.x, nonmoving[j]->getPos());
@@ -202,7 +207,9 @@ int main( int argc, char* args[] )
 
        //enemy collisions including enemies bumpimng into enemies
        for(int j = 0; j <enemies.size(); j++){// see if mario squashed an enemy
-          enemies[j]->marioCollision(camera.x,mario.getHitBox(), mario.yvelocity()); //tried to give mario a bost when he jumps off enemies
+          if(enemies[j]->marioCollision(camera.x,mario.getHitBox(), mario.yvelocity())){ //tried to give mario a bost when he jumps off enemies
+	     	mario.bounceOffEnemy();
+	  }
        }
        for(int j = 0; j < enemies.size(); j++){
           if(enemies[j]->getAlive()){
@@ -264,20 +271,23 @@ int main( int argc, char* args[] )
          //e = SDL;
          break;
        }
-
+/*
        //Check if any enemies have died, if so remove them from gameplay
        deque<Enemy*>::iterator enemyIt; //note this is a pointer to a pointer
        for(enemyIt = enemies.begin(); enemyIt != enemies.end(); enemyIt++){\
           if( (*enemyIt)->getDeathCount() >= 25 ){
-             enemies.erase(enemyIt);
+		cout << "Deleting enemy" << endl;
+		*enemyIt = NULL;
+       	      	enemies.erase(enemyIt);
           }  
        }
-
-       if(i>100) nonmoving[4]->collision();
+*/
        //delays to set proper framerate
-       SDL_Delay(10);
+       if(mario.xposition()>100*blockSize) SDL_Delay(6);
+	else SDL_Delay(10);	
     } //single life loop
   } //multiplife loop
+
 
 //Free resources and close SDL
 close();
