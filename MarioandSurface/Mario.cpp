@@ -492,6 +492,11 @@ void Mario::enemyCollision(SDL_Rect object){
   int enemyLeft = object.x;			//Object's left
   int enemyRight = object.x + object.w;	//Object's right
   
+     if(enemyTop <= Mbottom && enemyBottom > Mbottom && yvel > 0){
+         if( (Mright >= enemyLeft && Mleft <= enemyLeft) || (Mleft <= enemyRight && Mright >= enemyRight) ){
+            return;
+         }
+      }
 
   //collide into right
   if(Mright >= enemyLeft && Mleft < enemyLeft){
