@@ -281,7 +281,6 @@ int main( int argc, char* args[] )
           mario.lostLife();
           endgame = 1;
        }
-	cout << mario.xposition()/blockSize << endl;
 	if(mario.xposition() >= 198.4*blockSize){
 		wingame = 1;
 		endgame = 1;
