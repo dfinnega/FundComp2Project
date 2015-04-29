@@ -23,7 +23,7 @@ class Enemy{
         //moves the enemy
         virtual void move(SDL_Rect*) = 0;
         void mapCollision(int , SDL_Rect);
-        virtual double marioCollision(int, SDL_Rect, double) = 0; //detect getting killed by mario 
+        virtual int marioCollision(int, SDL_Rect, double) = 0; //detect getting killed by mario 
         int topCollision(int, SDL_Rect, double); //detect getting hit from above
            //this funciton makes the enemy class abstract
            //this is the only virtual one, because the only thing 

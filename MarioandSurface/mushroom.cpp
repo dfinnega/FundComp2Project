@@ -129,7 +129,7 @@ void Mushroom::initSprite(){
    }
 }
 
-void Mushroom::marioCollision(int cameraX, SDL_Rect mario){
+int Mushroom::marioCollision(int cameraX, SDL_Rect mario){
    bool collisionFlag = 1; //assume a collision
    if(hitBox.y+hitBox.h <= mario.y ) collisionFlag = 0;
    if(hitBox.y >= mario.y+mario.h) collisionFlag = 0;

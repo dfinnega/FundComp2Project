@@ -18,7 +18,7 @@ class Mushroom{
       Mushroom(int, int);
       void move(SDL_Rect*);
       void mapCollision(int, SDL_Rect);
-      void marioCollision(int, SDL_Rect);
+      int marioCollision(int, SDL_Rect);
 
       //show the enemy on the screen
       void render(int, int);

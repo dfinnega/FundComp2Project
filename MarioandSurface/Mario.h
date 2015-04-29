@@ -16,7 +16,7 @@ class Mario {
     double yposition();
     double yvelocity();
     void setYvelocity(double);
-    int mapCollision(int, SDL_Rect);
+    int* mapCollision(int, SDL_Rect);
     void enemyCollision(SDL_Rect); //see if mario dies!
     void deathAnimation();
     SDL_Rect getHitBox();
@@ -26,6 +26,7 @@ class Mario {
     int getLifeCount(); //return # of lives mario has
     void lostLife();
     void initialize(); //set all stats back to constructor stats
+    void getBig();
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier
     enum{left, right};		//enums to make direction easier
@@ -51,6 +52,8 @@ class Mario {
     
     int onGround;		//1 if on the ground, 0 otherwise
     int runningSprite;		//alternates between 0, 1, and 2, and makes the Mario running animation
+    int big;
+    int spriteOffset;
     
     SDL_Rect hitBox;
 

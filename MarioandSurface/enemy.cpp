@@ -35,7 +35,7 @@ Enemy::Enemy( int startX, int startY ){
 }
 
 void Enemy::render(int camX, int camY){
-   //show the dot
+   //show the dot if in the camera window
    if( mPosX >= camX && mPosX <= camX+SCREEN_WIDTH){
       enemyTexture.render(mPosX - camX, mPosY - camY, &enemySpriteClips[frame/4]);
       //cout << camY << " " << mPosY << endl;

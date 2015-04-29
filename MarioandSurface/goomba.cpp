@@ -70,7 +70,7 @@ void Goomba::decideFrame(){
 
 }
 
-double Goomba::marioCollision(int cameraX, SDL_Rect  mario, double Myvelocity){
+int Goomba::marioCollision(int cameraX, SDL_Rect  mario, double Myvelocity){
 
    if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
       if(alive){
@@ -80,7 +80,7 @@ cout<<"mario killed enemy"<<endl;
             mPosX-=mVelX;
             mVelX = 0;
             hitBox.h-=10;//make lil goomba appear on ground
-            return -10; // make mario hop up a bit
+            return 1; // make mario hop up a bit
          }
       }
    }

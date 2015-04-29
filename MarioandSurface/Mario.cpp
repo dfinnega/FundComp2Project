@@ -23,11 +23,47 @@ const double Mario::airSkidDecel[3] = {0.109863281, 0.09765625, 0.063476563};
 Mario::Mario(){
   //start by clipping sprite sheet correctly
   enum {standr,runr1,runr2,runr3,skidr,jumpr,death};
-  //clip sprit sheet
+  //clip sprit sheet for small Mario
   marioSprites[standr].x = 210;
   marioSprites[standr].y = 0;
   marioSprites[standr].w = 17;
   marioSprites[standr].h = 18;
+
+  marioSprites[runr1].x = 238;
+  marioSprites[runr1].y = 0;
+  marioSprites[runr1].w = 17;
+  marioSprites[runr1].h = 18;
+
+  marioSprites[runr2].x = 298;
+  marioSprites[runr2].y = 0;
+  marioSprites[runr2].w = 17;
+  marioSprites[runr2].h = 18;
+
+  marioSprites[runr3].x = 267;
+  marioSprites[runr3].y = 0;
+  marioSprites[runr3].w = 17;
+  marioSprites[runr3].h = 18;
+
+  marioSprites[skidr].x = 330;
+  marioSprites[skidr].y = 0;
+  marioSprites[skidr].w = 16;
+  marioSprites[skidr].h = 17;
+
+  marioSprites[jumpr].x = 359;
+  marioSprites[jumpr].y = 0;
+  marioSprites[jumpr].w = 17;
+  marioSprites[jumpr].h = 18;
+
+  marioSprites[death].x = 389; 
+  marioSprites[death].y = 15;
+  marioSprites[death].w = 16;
+  marioSprites[death].h = 16;
+
+  //clip sprites for big Mario
+  marioSprites[standr+7].x = 209;
+  marioSprites[standr+7].y = 51;
+  marioSprites[standr+7].w = 17;
+  marioSprites[standr+7].h = 34;
 
   marioSprites[runr1].x = 238;
   marioSprites[runr1].y = 0;
@@ -89,8 +125,11 @@ Mario::Mario(){
   onGround = 1;
   for(int i=0; i<4; i++)
 	mapCollide[i]=0;
+ 
+  spriteOffset = 0;//start off small
 
   //mario start off alive
+  getBig();
   alive = 1;
   lifeCount = 3; //mario starts off with three lives
 }
@@ -138,8 +177,7 @@ void Mario::move(int i, int camerax){
 void Mario::render(){
   //Mario's Rendering function 
   //Render sprite texture to screen
-
-
+  cout << sprite() + spriteOffset << endl;
   SDL_RenderCopyEx( gRenderer, marioSheet, &marioSprites[sprite()],&spriteLocation,0,NULL,flipType ); 
   //render horizontal grid to screen 
   SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0x00, 0xFF); 
@@ -152,6 +190,15 @@ int Mario::sprite(){
      //sprite function
      //decide what spriteLocation to render
   int sprite;
+  //if he is big and holding down
+  const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+  if( currentKeyStates[ SDL_SCANCODE_DOWN ] && big ){
+    if(onGround){
+	sprite = death; //offset for pushup Mario sprite
+    }
+    return sprite;
+  }
+	
   if(alive){
      //first determine the x direction, default is the direction they were facing
      if(xdirection == left) { flipType = SDL_FLIP_HORIZONTAL; }
@@ -359,11 +406,12 @@ void Mario::handleInput(int i){
       xvel = 0;
     }
   }
+
 }
 //==============================================================================================
-int Mario::mapCollision(int camerax, SDL_Rect object){
+int* Mario::mapCollision(int camerax, SDL_Rect object){
   int Mtop = ypos;			//Mario's top
-  int Mbottom = ypos + blockSize;	//Mario's bottom
+  int Mbottom = ypos + spriteLocation.h;	//Mario's bottom
   int Mleft = xpos;			//Mario's left
   int Mright = xpos + blockSize;	//Mario's right
   //object's coordinates (easier to work with)
@@ -407,6 +455,7 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
          //cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
          xpos -=xvel;
          xvel = 0;
+	 mapCollide[rightCollision] = 1;
       }
    }
 
@@ -417,6 +466,7 @@ int Mario::mapCollision(int camerax, SDL_Rect object){
          //cout<<a<<" "<<b<<" "<<ypos<<" "<<object.y<<" "<<ypos+blockSize<<" "<<object.y+object.h<<endl;
          xpos -=xvel;
          xvel = 0;
+	 mapCollide[leftCollision] = 1;
       }
    }
 
@@ -528,4 +578,15 @@ void Mario::initialize(){
 
   //mario start off alive
   alive = 1;
+}
+
+void Mario::getBig(){
+  //make Mario Big Mario
+  big = 1;
+  ypos -= blockSize;
+  hitBox.y = ypos + 10;
+  hitBox.h = 2*blockSize - 20;
+  spriteLocation.y = ypos + 5;
+  spriteLocation.h = 2*blockSize;
+  spriteOffset = 7;
 }
