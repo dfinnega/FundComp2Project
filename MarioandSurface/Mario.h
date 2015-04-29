@@ -16,7 +16,7 @@ class Mario {
     double yposition();
     double yvelocity();
     void setYvelocity(double);
-    int* mapCollision(int, SDL_Rect);
+    int mapCollision(int, SDL_Rect);
     void enemyCollision(SDL_Rect); //see if mario dies!
     void deathAnimation();
     SDL_Rect getHitBox();
@@ -27,6 +27,7 @@ class Mario {
     void lostLife();
     void initialize(); //set all stats back to constructor stats
     void getBig();
+    void getSmall();
     
     enum {standr,runr1,runr2,runr3,skidr,jumpr,death};	//enums to make indexing sprites easier
     enum{left, right};		//enums to make direction easier
@@ -59,7 +60,7 @@ class Mario {
 
     SDL_RendererFlip flipType;
     SDL_Rect spriteLocation;	//allows the sprites to be stretched to blockSize
-    SDL_Rect marioSprites[7];	//Holds the clips for each of the Mario sprites
+    SDL_Rect marioSprites[14];	//Holds the clips for each of the Mario sprites
 
     int sprite();		//determines which sprite to render
 

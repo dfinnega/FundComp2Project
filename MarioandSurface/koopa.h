@@ -13,7 +13,7 @@ class Koopa: public Enemy{
 		Koopa( int, int);
 		void move(SDL_Rect*);
 		void decideFrame();
-                double marioCollision(int, SDL_Rect, double);
+                int marioCollision(int, SDL_Rect, double);
          private:
 		void initSprite();
                 int hitCount; //detect how many times mario has hit it

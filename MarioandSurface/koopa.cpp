@@ -90,7 +90,7 @@ void  Koopa::decideFrame(){
    }
 }
 
-double Koopa::marioCollision(int cameraX, SDL_Rect mario, double Myvelocity){
+int Koopa::marioCollision(int cameraX, SDL_Rect mario, double Myvelocity){
    if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
       if(alive || hitCount >= 1){
          if(topCollision(cameraX, mario, Myvelocity)){

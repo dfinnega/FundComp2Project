@@ -63,37 +63,37 @@ Mario::Mario(){
   marioSprites[standr+7].x = 209;
   marioSprites[standr+7].y = 51;
   marioSprites[standr+7].w = 17;
-  marioSprites[standr+7].h = 34;
+  marioSprites[standr+7].h = 35;
 
-  marioSprites[runr1].x = 238;
-  marioSprites[runr1].y = 0;
-  marioSprites[runr1].w = 17;
-  marioSprites[runr1].h = 18;
+  marioSprites[runr1+7].x = 238;
+  marioSprites[runr1+7].y = 51;
+  marioSprites[runr1+7].w = 17;
+  marioSprites[runr1+7].h = 35;
 
-  marioSprites[runr2].x = 298;
-  marioSprites[runr2].y = 0;
-  marioSprites[runr2].w = 17;
-  marioSprites[runr2].h = 18;
+  marioSprites[runr2+7].x = 270;
+  marioSprites[runr2+7].y = 51;
+  marioSprites[runr2+7].w = 17;
+  marioSprites[runr2+7].h = 34;
 
-  marioSprites[runr3].x = 267;
-  marioSprites[runr3].y = 0;
-  marioSprites[runr3].w = 17;
-  marioSprites[runr3].h = 18;
+  marioSprites[runr3+7].x = 299;
+  marioSprites[runr3+7].y = 51;
+  marioSprites[runr3+7].w = 18;
+  marioSprites[runr3+7].h = 35;
 
-  marioSprites[skidr].x = 330;
-  marioSprites[skidr].y = 0;
-  marioSprites[skidr].w = 16;
-  marioSprites[skidr].h = 17;
+  marioSprites[skidr+7].x = 329;
+  marioSprites[skidr+7].y = 52;
+  marioSprites[skidr+7].w = 17;
+  marioSprites[skidr+7].h = 35;
 
-  marioSprites[jumpr].x = 359;
-  marioSprites[jumpr].y = 0;
-  marioSprites[jumpr].w = 17;
-  marioSprites[jumpr].h = 18;
+  marioSprites[jumpr+7].x = 359;
+  marioSprites[jumpr+7].y = 51;
+  marioSprites[jumpr+7].w = 18;
+  marioSprites[jumpr+7].h = 35;
 
-  marioSprites[death].x = 389; 
-  marioSprites[death].y = 15;
-  marioSprites[death].w = 16;
-  marioSprites[death].h = 16;
+  marioSprites[death+7].x = 389; 
+  marioSprites[death+7].y = 15;
+  marioSprites[death+7].w = 16;
+  marioSprites[death+7].h = 16;
 
   //initialize rendering values
   flipType = SDL_FLIP_NONE;
@@ -163,7 +163,8 @@ void Mario::move(int i, int camerax){
      ypos+=yvel;
   }
   // This renders Mario's bottom left at the ypos (for better control of where Mario is)
-  spriteLocation.y = ypos+5;
+  if(!big)  spriteLocation.y = ypos+5;
+  else spriteLocation.y = ypos;
   spriteLocation.x = xpos - camerax;
 
   //update hitbox
@@ -177,13 +178,8 @@ void Mario::move(int i, int camerax){
 void Mario::render(){
   //Mario's Rendering function 
   //Render sprite texture to screen
-  cout << sprite() + spriteOffset << endl;
-  SDL_RenderCopyEx( gRenderer, marioSheet, &marioSprites[sprite()],&spriteLocation,0,NULL,flipType ); 
-  //render horizontal grid to screen 
-  SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0x00, 0xFF); 
-  for(int gridheight=1; gridheight<=SCREEN_HEIGHT/blockSize; gridheight ++){ 
-    SDL_RenderDrawLine( gRenderer, 0, gridheight*blockSize, SCREEN_WIDTH, gridheight*blockSize ); 
-  } 
+  cout << ypos << " " << sprite() + spriteOffset << endl;
+  SDL_RenderCopyEx( gRenderer, marioSheet, &marioSprites[sprite() + spriteOffset],&spriteLocation,0,NULL,flipType);
 }
 //==============================================================================================
 int Mario::sprite(){
@@ -191,13 +187,13 @@ int Mario::sprite(){
      //decide what spriteLocation to render
   int sprite;
   //if he is big and holding down
-  const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
-  if( currentKeyStates[ SDL_SCANCODE_DOWN ] && big ){
-    if(onGround){
-	sprite = death; //offset for pushup Mario sprite
-    }
-    return sprite;
-  }
+//  const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+//  if( currentKeyStates[ SDL_SCANCODE_DOWN ] && big ){
+//    if(onGround){
+//	sprite = death; //offset for pushup Mario sprite
+//    }
+//    return sprite;
+//  }
 	
   if(alive){
      //first determine the x direction, default is the direction they were facing
@@ -409,9 +405,10 @@ void Mario::handleInput(int i){
 
 }
 //==============================================================================================
-int* Mario::mapCollision(int camerax, SDL_Rect object){
+int Mario::mapCollision(int camerax, SDL_Rect object){
+  int collisionType=0;
   int Mtop = ypos;			//Mario's top
-  int Mbottom = ypos + spriteLocation.h;	//Mario's bottom
+  int Mbottom = ypos + spriteLocation.h;//Mario's bottom
   int Mleft = xpos;			//Mario's left
   int Mright = xpos + blockSize;	//Mario's right
   //object's coordinates (easier to work with)
@@ -436,6 +433,7 @@ int* Mario::mapCollision(int camerax, SDL_Rect object){
 	onGround = 1;
 	ypos = Otop - blockSize;
 	mapCollide[topCollision] = 1;
+	collisionType = 1;
     }
   }
 
@@ -445,6 +443,7 @@ int* Mario::mapCollision(int camerax, SDL_Rect object){
         ypos = Obottom;
         yvel *= -1;
 	mapCollide[bottomCollision] = 1;
+	collisionType = 2;
     }
   }
 
@@ -473,6 +472,7 @@ int* Mario::mapCollision(int camerax, SDL_Rect object){
    //update hitbox
    hitBox.x = xpos + 5;
    hitBox.y = ypos + 5;
+   return collisionType;
 }
 //==============================================================================================
 void Mario::enemyCollision(SDL_Rect object){
@@ -589,4 +589,13 @@ void Mario::getBig(){
   spriteLocation.y = ypos + 5;
   spriteLocation.h = 2*blockSize;
   spriteOffset = 7;
+}
+
+void Mario::getSmall(){
+  big = 0;
+  ypos += blockSize;
+  hitBox.y = ypos + 5;
+  spriteLocation.y = ypos + 5;
+  spriteLocation.h = blockSize;
+  spriteOffset = 0;
 }
