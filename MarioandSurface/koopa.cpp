@@ -94,7 +94,7 @@ int Koopa::marioCollision(int cameraX, SDL_Rect mario, double Myvelocity){
    if(mPosX >= cameraX && mPosX < cameraX+SCREEN_WIDTH){
       if(alive || hitCount >= 1){
          if(topCollision(cameraX, mario, Myvelocity)){
-            alive = 0;
+            //alive = 0;
             hitCount++;
             mPosX -=mVelX;
             if(hitCount < 2){
@@ -102,6 +102,7 @@ int Koopa::marioCollision(int cameraX, SDL_Rect mario, double Myvelocity){
                hitBox.h-=10; //make lil shell appear on the ground
             }else if(hitCount == 2){
                mVelX = 7; //shell zooms fast across screen
+               //alive = 0;
             }
             return 1; //make mario bounce up a bit
          }
