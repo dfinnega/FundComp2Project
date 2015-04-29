@@ -3,6 +3,8 @@
 #include "SDL2/SDL.h"
 #include "Flag.h"
 #include "globalVars.h"
+#include <iostream>
+using namespace std;
 
 Flag::Flag(int xgrid, int ygrid)
         :NonMoving(xgrid, ygrid)
@@ -30,5 +32,5 @@ void Flag::render(int camX, int camY){
 }
 
 void Flag::collision(){
-  
+  cout << "The Game is Over! You Win!" << endl;
 }

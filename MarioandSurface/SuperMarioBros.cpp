@@ -76,6 +76,7 @@ int main( int argc, char* args[] )
      //Main loop flag
      bool quit = false;
      bool endgame = 0; //use this to detect if mario lost a life
+     bool wingame = 0;
 
      //Event handler, only accepts the esc key to quit program
      //all other events are processed by Mario's class
@@ -280,6 +281,12 @@ int main( int argc, char* args[] )
           mario.lostLife();
           endgame = 1;
        }
+	cout << mario.xposition()/blockSize << endl;
+	if(mario.xposition() >= 198.4*blockSize){
+		wingame = 1;
+		endgame = 1;
+		cout << "You Win!" << endl;
+	}
 
        if(endgame == 1){
           //prepare to initialize again
@@ -299,6 +306,7 @@ int main( int argc, char* args[] )
        if(mario.xposition()>100*blockSize) SDL_Delay(6);
 	else SDL_Delay(10);	
     } //single life loop
+    if(wingame) break;
   } //multiplife loop
 
 

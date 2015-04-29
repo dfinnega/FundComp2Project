@@ -605,8 +605,8 @@ void Mario::getBig(){
   //make Mario Big Mario
   big = 1;
   ypos -= blockSize;
-  hitBox.y = ypos +5;
-  hitBox.h = 2*blockSize;
+  hitBox.y = ypos + 5;
+  hitBox.h = 2*blockSize-10;
   spriteLocation.y = ypos + 5;
   spriteLocation.h = 2*blockSize;
   spriteOffset = 7;
@@ -616,15 +616,12 @@ void Mario::getSmall(){
   big = 0;
   ypos += blockSize;
   hitBox.y = ypos + 5;
+  hitBox.h = blockSize-10;
   spriteLocation.y = ypos + 5;
   spriteLocation.h = blockSize;
   spriteOffset = 0;
 }
 
 void Mario::bounceOffEnemy(){
-    int gravIndex;
-    if(xvel < 2.5) gravIndex=0;
-    else if(xvel >=2.5 && xvel <=5.780639648) gravIndex=1;
-    else gravIndex=2;
     yvel *= -1;
 }
