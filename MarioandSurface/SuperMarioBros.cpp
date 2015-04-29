@@ -63,12 +63,13 @@ int main( int argc, char* args[] )
 
   //declare Mario
   Mario mario;
-  Mushroom shroom(21*blockSize, 8*blockSize); //initalize shroom
 
   //create list of nonmoving elements
   deque<NonMoving*> nonmoving;
   //create list of enemies
   deque<Enemy*> enemies;
+  
+  deque<Mushroom*> mushrooms;
   
   //This bigger loop will allow for multiple lives
   while(!gameover){
@@ -127,7 +128,9 @@ int main( int argc, char* args[] )
                    enemies.push_back(new Goomba( xcoord*blockSize, ycoord*blockSize));
            } else if(blockType == "koopa"){
 		   enemies.push_back(new Koopa( xcoord*blockSize, ycoord*blockSize));
-           }
+           } else if(blockType =="mushroom"){
+                   mushrooms.push_back(new Mushroom((xcoord-1)*blockSize, (ycoord-1)*blockSize));
+          }
      }
 
      //create the camera
@@ -175,7 +178,10 @@ int main( int argc, char* args[] )
        }
   
        mario.render();
-       shroom.render(camera.x, camera.y);
+       //shroom.render(camera.x, camera.y);
+       for(int j = 0; j < mushrooms.size();j++){
+          mushrooms[j]->render(camera.x, camera.y);
+       }
        for(int j=0; j<nonmoving.size(); j++){
 	     nonmoving[j]->render(camera.x, camera.y);
        }
@@ -192,21 +198,30 @@ int main( int argc, char* args[] )
        for( int j = 0; j < enemies.size(); j++){
            enemies[j]->move(&camera);
        }
-       shroom.move(&camera);
+       for( int j = 0; j < mushrooms.size(); j++){
+           mushrooms[j]->move(&camera);
+       }
        //Check for collisions
-       if(shroom.marioCollision(camera.x,mario.getHitBox())){
-		mario.getBig();
+       for(int k = 0; k < mushrooms.size(); k++){
+          if(mushrooms[k]->marioCollision(camera.x,mario.getHitBox())){
+		   mario.getBig();
+          }
        }
        for(int j = 0; j < nonmoving.size(); j++){ //map collisions
           if(mario.mapCollision(camera.x, nonmoving[j]->getPos())==2){
 		nonmoving[j]->collision();
-                if(shroom.getPosX() == nonmoving[j]->getPos().x ){
-                   if(shroom.getPosY() == nonmoving[j]->getPos().y){
-                      shroom.setActive();
+                for(int l = 0; l <mushrooms.size(); l++){
+                   if(mushrooms[l]->getPosX() == nonmoving[j]->getPos().x ){
+                      if(mushrooms[l]->getPosY() == nonmoving[j]->getPos().y){
+                         mushrooms[l]->setActive();
+                      }
                    }
                 }
 	  }
-          shroom.mapCollision(camera.x, nonmoving[j]->getPos());
+          //shroom.mapCollision(camera.x, nonmoving[j]->getPos());
+          for(int k = 0; k <mushrooms.size(); k++){
+            mushrooms[k]->mapCollision(camera.x, nonmoving[j]->getPos());
+          }
           for(int k = 0; k <enemies.size(); k++){
              enemies[k]->mapCollision(camera.x, nonmoving[j]->getPos());
           }
@@ -270,6 +285,7 @@ int main( int argc, char* args[] )
           //prepare to initialize again
          mario.initialize();
          nonmoving.clear();
+         mushrooms.clear();
          enemies.clear();
          world11.close();
          if(mario.getLifeCount() <= 0){

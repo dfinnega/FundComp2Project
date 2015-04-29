@@ -1,6 +1,7 @@
 question	17	9
 brick		21	9
 question	22	9
+mushroom	22	9
 goomba		22	11
 brick		23	9
 question	23	5
@@ -16,6 +17,7 @@ pipe		58	9
 brick		65	8
 brick		78	9
 question	79	9
+mushroom	79	9
 brick		80	9
 goomba		82	3
 brick		81	5
@@ -41,6 +43,7 @@ question	108	9
 koopa		108	11
 question	111	9
 question	111	5
+mushroom	111	5
 question	114	9
 brick		120	9
 brick		123	5
