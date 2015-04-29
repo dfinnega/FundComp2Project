@@ -285,6 +285,7 @@ int main( int argc, char* args[] )
 		wingame = 1;
 		endgame = 1;
 		cout << "You Win!" << endl;
+		SDL_Delay(5000);
 	}
 
        if(endgame == 1){
